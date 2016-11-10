@@ -1,4 +1,6 @@
-#inlcude "project.h"
+#include "project.h"
+
+
 class TileMap : public sf::Drawable, public sf::Transformable
 {
 public:
