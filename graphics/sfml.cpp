@@ -120,9 +120,11 @@ int main()
 		return -1;
 	}
 	zombie.setTexture(zombie_texture);
-	zombie.setPosition(200,100);
+	zombie.setPosition(64,156);
 	
-	
+	int xCoor=(sprite.getPosition().x / 32);
+	int yCoor = (int) (sprite.getPosition().y / 32);
+	int index = xCoor+yCoor*16;
 	//main loop
     while (window.isOpen()) {
         sf::Event event;
@@ -133,17 +135,25 @@ int main()
 					window.close();
 					break;
 				case sf::Event::KeyPressed:
+					xCoor=(int) (sprite.getPosition().x / 32);
+					yCoor = (int) (sprite.getPosition().y / 32);
+					index = xCoor+yCoor*16;
 					if(event.key.code == sf::Keyboard::W) {
+						if (index >= 16 && level[index-16] != 0) //check window bounds and water 
 						sprite.move(0,-32);
 					}
 					if(event.key.code == sf::Keyboard::A) {
+						if (index % 16 != 0 && level[index-1] != 0)
 						sprite.move(-32,0);
 					}
 					if(event.key.code == sf::Keyboard::S) {
+						if (index <=112 && level[index+16] != 0)
 						sprite.move(0,32);
 					}
 					if(event.key.code == sf::Keyboard::D) {
+						if (index % 16 != 15 && level[index+1] != 0)
 						sprite.move(32,0);
+						
 					}
 					
 				default:
@@ -164,13 +174,13 @@ int main()
         //VERY IMPORTANT: collision detection is done after drawing
         //	if it's done before the bounds are not defined
         sf::FloatRect boundingBox = sprite.getGlobalBounds();
-		sf::FloatRect whiteBox = rectangle.getGlobalBounds();
+		sf::FloatRect zombieBox = zombie.getGlobalBounds();
 		
-		//very simple collision detection. THIS WALL CAN ONLY BE A TOP WALL etc
-		//need to figure out a way to set sprite move behavior based on direction
-		if(boundingBox.intersects(whiteBox))//upper wall
+		if(boundingBox.intersects(zombieBox))
 		{
-			sprite.move(1,0);
+			sprite.move(0,-32);
+			player.damage(.1);
+			
 			//std::cout << "collision detected"<< std::endl;
 		}	
 
