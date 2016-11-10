@@ -1,1 +1,1 @@
-g++ -c sfml.cpp && g++ project.cpp sfml.o -o sfml-app -lsfml-graphics -lsfml-window -lsfml-system && ./sfml-app
+g++ -std=c++11 -c sfml.cpp  && g++ -std=c++11 project.cpp  sfml.o -o sfml-app -lsfml-graphics -lsfml-window -lsfml-system && ./sfml-app

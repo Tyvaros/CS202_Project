@@ -21,19 +21,4 @@ private:
 	float movespeed_;
 };
 
-class Player : public Actor
-{
-public:
-	
-private:
-};
-class Tile
-{
-public:
-	Tile();
-	Tile(float h, float w);
-private:
-	float height_;
-	float width_;
-};
 #endif
