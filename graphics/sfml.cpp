@@ -1,5 +1,4 @@
 #include "project.h"
-#include "items.h"
 
 std::string playerStat(std::stringstream & s, Actor & a) {
 	s << a.getHealth();
@@ -68,15 +67,14 @@ private:
 };
 int main()
 {
-	Actor player;
+	srand(time(0));
+	Player player;
+	Enemy zombie1;
     sf::RenderWindow window(sf::VideoMode(512,256), "Project Window");
     
     sf::RectangleShape rectangle(sf::Vector2f(32,32));//top wall
 
-	sf::Font font;
-	if(!font.loadFromFile("LiberationMono-Bold.ttf")) {
-		return -1;
-	}
+	
 	//the tiles for the map, see picture for details
 	//0=water,1=tree,2=grass/bottom bridge, 3= grass/bottom water, 4=grass/top bridge, 5=grass,6=bridge,7=flowers,8=grass/top bridge
 	const int level[] {
@@ -93,6 +91,10 @@ int main()
 	TileMap map;
 	if(!map.load("tileset.png",sf::Vector2u(32,32), level,16,8)) {
 		return 1;
+	}
+	sf::Font font;
+	if(!font.loadFromFile("LiberationMono-Bold.ttf")) {
+		return -1;
 	}
 	sf::Text health;
 	health.setFont(font);
@@ -127,41 +129,46 @@ int main()
 	int yCoor = (int) (sprite.getPosition().y / 32);
 	int index = xCoor+yCoor*16;
 	//main loop
+	sf::Clock clock;
     while (window.isOpen()) {
         sf::Event event;
         //event loop
-        while (window.pollEvent(event)) {
-            switch (event.type) {
-				case sf::Event::Closed:
-					window.close();
-					break;
-				case sf::Event::KeyPressed:
-					xCoor=(int) (sprite.getPosition().x / 32);
-					yCoor = (int) (sprite.getPosition().y / 32);
-					index = xCoor+yCoor*16;
-					if(event.key.code == sf::Keyboard::W) {
-						if (index >= 16 && level[index-16] != 0) //check window bounds and water 
-						sprite.move(0,-32);
-					}
-					if(event.key.code == sf::Keyboard::A) {
-						if (index % 16 != 0 && level[index-1] != 0)
-						sprite.move(-32,0);
-					}
-					if(event.key.code == sf::Keyboard::S) {
-						if (index <=112 && level[index+16] != 0)
-						sprite.move(0,32);
-					}
-					if(event.key.code == sf::Keyboard::D) {
-						if (index % 16 != 15 && level[index+1] != 0)
-						sprite.move(32,0);
+        sf::Time elapsed = clock.restart();
+        
+			while (window.pollEvent(event)) {
+				switch (event.type) {
+					case sf::Event::Closed:
+						window.close();
+						break;
+					case sf::Event::KeyPressed:
+						xCoor=(int) (sprite.getPosition().x / 32);
+						yCoor = (int) (sprite.getPosition().y / 32);
+						index = xCoor+yCoor*16;
+											
+						if(event.key.code == sf::Keyboard::W) {
+							if (index >= 16 && level[index-16] != 0) //check window bounds and water 
+							sprite.move(0,-32);
+						}
+						if(event.key.code == sf::Keyboard::A) {
+							if (index % 16 != 0 && level[index-1] != 0)
+							sprite.move(-32,0);
+						}
+						if(event.key.code == sf::Keyboard::S) {
+							if (index <=112 && level[index+16] != 0)
+							sprite.move(0,32);
+						}
+						if(event.key.code == sf::Keyboard::D) {
+							if (index % 16 != 15 && level[index+1] != 0)
+							sprite.move(32,0);
+						}
+
+						zombie1.updatePosition(zombie,level);
+						health.setString(playerStat(s,player));
 						
-					}
-					
-				default:
-					break;
+					default:
+						break;
 			}
         }
-        
 		std::cout<< "Health: "<<player.getHealth()<<std::endl;	
 		
         window.clear();
@@ -176,11 +183,11 @@ int main()
         //	if it's done before the bounds are not defined
         sf::FloatRect boundingBox = sprite.getGlobalBounds();
 		sf::FloatRect zombieBox = zombie.getGlobalBounds();
-		
+		s.str("");
 		if(boundingBox.intersects(zombieBox))
 		{
 			sprite.move(0,-32);
-			player.damage(.1);
+			player.damage(1);
 			
 			//std::cout << "collision detected"<< std::endl;
 		}	

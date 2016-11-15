@@ -7,18 +7,29 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+#include <ctime>
+
 
 class Actor 
 {
 public:
 	Actor(); 
-	void setHealth(float & x); 
-	void damage(float x);
-	float getHealth();
+	void setHealth(int & x); 
+	void damage(int x);
+	int getHealth();
 	
 private:
-	float health_;
-	float movespeed_;
+	int health_;
+	int movespeed_;
 };
-
+class Player: public Actor
+{
+public:
+	
+};
+class Enemy : public Actor
+{
+public:
+	void updatePosition(sf::Sprite &s,const int* level);
+};
 #endif
