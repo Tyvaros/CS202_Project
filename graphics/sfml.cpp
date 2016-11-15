@@ -1,4 +1,5 @@
 #include "project.h"
+#include "items.h"
 
 std::string playerStat(std::stringstream & s, Actor & a) {
 	s << a.getHealth();

@@ -13,7 +13,7 @@ using std::string;
 
 class item {
 public:
-    //item();
+//    item();
 protected:
     string name_;
 };
@@ -22,7 +22,7 @@ class weapon : public item{
 public:
     weapon();
     ~weapon();
-    
+    virtual int getDamage();
 protected:
     int damage_;
     int speed_;
@@ -33,7 +33,19 @@ class rangedWeapon : public weapon{
 public:
     rangedWeapon();
     ~rangedWeapon();
+    virtual int getDamage();
 protected:
+    int ammunition_;
+    int projectileSpeed_;
+};
+
+class bow : public rangedWeapon{
+public:
+    bow(string name="bow", int ammunition=10, int projectileSpeed=1);
+    ~bow();
+    virtual int getDamage();
+private:
+    string name_;
     int ammunition_;
     int projectileSpeed_;
 };
@@ -42,37 +54,51 @@ class meleWeapon : public weapon{
 public:
     meleWeapon();
     ~meleWeapon();
+    virtual int getDamage();
 protected:
     int reach_;
+    int cleave_;
     int attackSpeed_;
 };
 
 class longBlade : public meleWeapon{
 public:
-    longBlade(string name, int damage, int speed, int mass, int reach, int attackSpeed);
+    longBlade(string name="sword", int damage=2, int speed=0, int reach=1, int cleave=3);
     ~longBlade();
+    virtual int getDamage();
 private:
 };
 
 class shortBlade : public meleWeapon{
 public:
-    shortBlade(string name, int damage, int speed, int mass, int reach, int attackSpeed);
+    shortBlade(string name="dagger", int damage=10, int speed=0, int reach=1, int cleave=1);
     ~shortBlade();
+    virtual int getDamage();
 private:
+};
+
+class polearm : public meleWeapon{
+public:
+    polearm(string name="polearm", int damage=2, int speed=0, int reach=2, int cleave=1);
+    ~polearm();
+    virtual int getDamage();
+private:
+    
 };
 
 class axe : public meleWeapon{
 public:
-    axe(string name, int damage, int speed, int mass, int reach, int attackSpeed, int cleave);
+    axe(string name="axe", int damage=2, int speed=0, int reach=1, int cleave=3);
     ~axe();
+    virtual int getDamage();
 private:
-    int cleave_;
 };
 
 class impactWeapon : public meleWeapon{
 public:
-    impactWeapon(string name, int damage, int speed, int mass, int reach, int attackSpeed);
+    impactWeapon(string name="impact weapon", int damage=2, int speed=0, int reach=1, int cleave=1);
     ~impactWeapon();
+    virtual int getDamage(); 
 private:
 };
 

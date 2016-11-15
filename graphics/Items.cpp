@@ -14,10 +14,32 @@ weapon::~weapon(){
     delete this;
 }
 
+int weapon::getDamage(){
+    return damage_; 
+}
+
 rangedWeapon::rangedWeapon(){}
 
 rangedWeapon::~rangedWeapon(){
     delete this;
+}
+
+int rangedWeapon::getDamage(){
+    return damage_;
+}
+
+bow::bow(string name, int ammunition, int projectileSpeed){
+    name_=name;
+    ammunition_=ammunition;
+    projectileSpeed_=projectileSpeed;
+}
+
+bow::~bow(){
+    delete this;
+}
+
+int bow::getDamage(){
+    return damage_;
 }
 
 meleWeapon::meleWeapon(){}
@@ -26,39 +48,63 @@ meleWeapon::~meleWeapon(){
     delete this;
 }
 
-longBlade::longBlade(string name, int damage, int speed, int mass, int reach, int attackSpeed){
+int meleWeapon::getDamage(){
+    return damage_;
+}
+
+longBlade::longBlade(string name, int damage, int speed, int reach, int cleave){
     name_=name;
     damage_=damage;
     speed_=speed;
-    mass_=mass;
     reach_=reach;
-    attackSpeed_= attackSpeed;
+    cleave_=cleave;
 }
 
 longBlade::~longBlade(){
     delete this;
 }
 
-shortBlade::shortBlade(string name, int damage, int speed, int mass, int reach, int attackSpeed){
+int longBlade::getDamage(){
+    return damage_;
+}
+
+shortBlade::shortBlade(string name, int damage, int speed, int reach, int cleave){
     name_=name;
     damage_=damage;
     speed_=speed;
-    mass_=mass;
     reach_=reach;
-    attackSpeed_= attackSpeed;
+    cleave_=cleave;
 }
 
 shortBlade::~shortBlade(){
     delete this;
 }
 
-axe::axe(string name, int damage, int speed, int mass, int reach, int attackSpeed, int cleave){
+int shortBlade::getDamage(){
+    return damage_;
+}
+
+polearm::polearm(string name, int damage, int speed, int reach, int cleave){
     name_=name;
     damage_=damage;
     speed_=speed;
-    mass_=mass;
     reach_=reach;
-    attackSpeed_= attackSpeed;
+    cleave_=cleave;
+}
+
+polearm::~polearm(){
+    delete this;
+}
+
+int polearm::getDamage(){
+    return damage_;
+}
+
+axe::axe(string name, int damage, int speed, int reach, int cleave){
+    name_=name;
+    damage_=damage;
+    speed_=speed;
+    reach_=reach;
     cleave_=cleave;
 }
 
@@ -66,17 +112,24 @@ axe::~axe(){
     delete this;
 }
 
-impactWeapon::impactWeapon(string name, int damage, int speed, int mass, int reach, int attackSpeed){
+int axe::getDamage(){
+    return damage_;
+}
+
+impactWeapon::impactWeapon(string name, int damage, int speed, int reach, int cleave){
     name_=name;
     damage_=damage;
     speed_=speed;
-    mass_=mass;
     reach_=reach;
-    attackSpeed_= attackSpeed;
+    cleave_=cleave;
 }
 
 impactWeapon::~impactWeapon(){
     delete this;
+}
+
+int impactWeapon::getDamage(){
+    return damage_; 
 }
 
 modifier::modifier(){}
@@ -191,7 +244,7 @@ food::~food(){
 }
 
 void food::setStatus(){
-    //still write this code;
+    //still write this code;s
 }
 
 ammunition::ammunition(string name, int ammunitionValue){
