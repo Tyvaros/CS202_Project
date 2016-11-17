@@ -8,7 +8,7 @@
 #include <iostream>
 #include <sstream>
 #include <ctime>
-
+#include <vector>
 
 class Actor 
 {
@@ -30,6 +30,6 @@ public:
 class Enemy : public Actor
 {
 public:
-	void updatePosition(sf::Sprite &s,const int* level);
+	void updatePosition(sf::Sprite &s,std::vector<int> level);
 };
 #endif

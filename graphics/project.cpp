@@ -16,24 +16,25 @@ void Actor::damage(int x) {
 int Actor::getHealth() {
 	return health_;
 }
-void Enemy::updatePosition(sf::Sprite &s,const int* level) {
+void Enemy::updatePosition(sf::Sprite &s,std::vector<int> level) {
 	int xCoor=(int) (s.getPosition().x / 32);
 	int yCoor = (int) (s.getPosition().y / 32);
 	int index = xCoor+yCoor*16;
-						
-	if (index >= 16 && level[index-16] != 0 && (rand()%4 ==2)) //check window bounds and water 
+	int direction= rand()%6;					
+	if ((direction ==2) && index >= 16 && level[index-16] != 0) //check window bounds and water 
 		s.move(0,-32);	
 						
-	if (index % 16 != 0 && level[index-1] != 0 && (rand()%4 ==4))
+	if (direction==4 && index % 16 != 0 && level[index-1] != 0)
 		s.move(-32,0);								
 					
-	if (index <=112 && level[index+16] != 0 && (rand()%4 ==1))
+	if (direction ==1 && index <=112 && level[index+16] != 0)
 		s.move(0,32);						
 						
-	if (index % 16 != 15 && level[index+1] != 0 && (rand()%4 ==3))
+	if (direction ==3 && index % 16 != 15 && level[index+1] != 0)
 		s.move(32,0);
-	
-	
+		
+	if (direction==5)
+		s.move(0,0);
 }
 
 //std::string playerStat(std::stringstream & s, Actor a) {
