@@ -16,6 +16,7 @@ void Actor::damage(int x) {
 int Actor::getHealth() {
 	return health_;
 }
+
 void Enemy::updatePosition(sf::Sprite &s,std::vector<int> level) {
 	int xCoor=(int) (s.getPosition().x / 32);
 	int yCoor = (int) (s.getPosition().y / 32);

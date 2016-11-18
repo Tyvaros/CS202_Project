@@ -66,32 +66,58 @@ private:
     sf::VertexArray m_vertices;
     sf::Texture m_tileset;
 };
-std::vector<int> levelGen() {
+std::vector<int> levelGen() {//generates a random map
 	std::vector<int> level(128);
+	
+	int sum=0;
+	while(sum<128) {
+		sum=0;
+		for(int i=1;i<128;i++) {
+			level[i]=(rand()%3);
+		}
+		for(int i=0;i<128;i++) {
+			sum+=level[i];
+		}
+	}	
 	level[0]=1;
-	for(int i=1;i<127;i++) {
-		level[i]=(rand()%2);
-	}
+	level[1]=1;
+	level[2]=1;
+	level[17]=1;
 	return level;
 }
-TileMap mapInit(std::vector<int> level) {
+TileMap mapInit(std::vector<int> level) {//loads a new map
 	
 	TileMap map;
-	if(!map.load("tileset_cave.png",sf::Vector2u(32,32), level,16,8)) {
+	if(!map.load("tilese_cave.png",sf::Vector2u(32,32), level,16,8)) {
 		return map;
 	}
 	return map;
 }
+void randPos(sf::Transformable &s,std::vector<int> level) {
+	int xCoor;
+	int yCoor;
+	
+	while(true) {//This prevents the new position to be on an impassible space	
+		xCoor=(rand()%15)*32;
+		yCoor = (rand()%7)*32;
+		if(level[(xCoor/32)+(yCoor/32)*16] !=0) {
+			s.setPosition(xCoor,yCoor);
+			break;
+		}
+	}
 
-
+}
+//Important note, to make everything much easier, 
+//we should store all of the entities into a vector 
+//and then pass into the transform functions to 
+//draw,move,set everything at once
 int main()
 {
 	srand(time(0));
 	Player player;
 	Enemy zombie1;
     sf::RenderWindow window(sf::VideoMode(512,288), "Project Window");
-    sf::RectangleShape doorBox(sf::Vector2f(32,32));
-    doorBox.setPosition(0,0);
+    
 	sf::RectangleShape rectangle(sf::Vector2f(512,32));//healthbox
 	rectangle.setPosition(0,256);
 	
@@ -136,15 +162,23 @@ int main()
 		}
 	sprite.setTexture(texture);
 	sprite.setPosition(448,64);
-	sprite.setScale(1,.5);
+	sprite.setScale(.5,.5);
 	
 	sf::Sprite zombie;
-	sf::Texture zombie_texture;
-	if(!zombie_texture.loadFromFile("zombie.png")) {
+	sf::Texture zombieTexture;
+	if(!zombieTexture.loadFromFile("zombie.png")) {
 		return -1;
 	}
-	zombie.setTexture(zombie_texture);
-	zombie.setPosition(0,0);
+	zombie.setTexture(zombieTexture);
+	zombie.setPosition(32,32);
+	
+	sf::Sprite stairs;
+    stairs.setPosition(32,32);
+    sf::Texture stairsTexture;
+    if(!stairsTexture.loadFromFile("stairs.png")) {
+		return -1;
+	}
+	stairs.setTexture(stairsTexture);
 	
 	int xCoor=(sprite.getPosition().x / 32);
 	int yCoor = (int) (sprite.getPosition().y / 32);
@@ -195,11 +229,11 @@ int main()
         
         sf::FloatRect boundingBox = sprite.getGlobalBounds();
 		sf::FloatRect zombieBox = zombie.getGlobalBounds();
-		sf::FloatRect door =doorBox.getGlobalBounds();
+		sf::FloatRect stairBox =stairs.getGlobalBounds();
        
 		//window.draw(map2);
 		window.draw(map);
-		window.draw(doorBox);
+		window.draw(stairs);
         window.draw(rectangle);
         window.draw(zombie);
         window.draw(sprite);
@@ -208,12 +242,15 @@ int main()
         //stuff needs to be drawn in the right order.
         //VERY IMPORTANT: collision detection is done after drawing
         //	if it's done before the bounds are not defined
-        if(boundingBox.intersects(door)) {
+        if(boundingBox.intersects(stairBox)) {
 			level=levelGen();
 			map=mapInit(level);
 			//mapLoad(map,level);
 			std::cout << "changed map" << std::endl;
-			sprite.setPosition(448,64);
+			randPos(zombie,level);
+			randPos(sprite,level);
+			randPos(stairs,level);
+			//stairs.setRotation((rand()%4)*90);
 		}
 			
 		if(boundingBox.intersects(zombieBox)) {
