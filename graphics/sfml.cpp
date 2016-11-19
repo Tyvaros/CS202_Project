@@ -68,9 +68,8 @@ private:
 };
 std::vector<int> levelGen() {//generates a random map
 	std::vector<int> level(128);
-	
 	int sum=0;
-	while(sum<128) {
+	while(sum<140) {
 		sum=0;
 		for(int i=1;i<128;i++) {
 			level[i]=(rand()%3);
@@ -151,7 +150,7 @@ int main()
 	health.setString(healthDisplay);
 	health.setPosition(0,256);
 	health.setCharacterSize(24);
-	health.setFillColor(sf::Color::Red);
+	health.setColor(sf::Color::Red);
 	
 	sf::Sprite sprite;
 	sf::Texture texture;	
@@ -179,6 +178,19 @@ int main()
 		return -1;
 	}
 	stairs.setTexture(stairsTexture);
+	
+	sf::Sprite mist;
+	sf::Texture mistTexture;
+	if(!mistTexture.loadFromFile("mist.png")) {
+		return -1;
+	}
+	const sf::Texture *mistPtr= &mistTexture;
+	mistTexture.setRepeated(true);
+	mist.setTexture(mistTexture);
+	mist.setScale(2,2);
+	mist.setPosition(0,-32);
+	
+	
 	
 	int xCoor=(sprite.getPosition().x / 32);
 	int yCoor = (int) (sprite.getPosition().y / 32);
@@ -219,7 +231,7 @@ int main()
 
 						zombie1.updatePosition(zombie,level);
 						health.setString(playerStat(s,player));
-						
+						mist.move(0,.1);
 					default:
 						break;
 			}
@@ -237,6 +249,7 @@ int main()
         window.draw(rectangle);
         window.draw(zombie);
         window.draw(sprite);
+        window.draw(mist);
         window.draw(health);
         window.display();
         //stuff needs to be drawn in the right order.
@@ -250,11 +263,12 @@ int main()
 			randPos(zombie,level);
 			randPos(sprite,level);
 			randPos(stairs,level);
+			mist.setPosition(0,-32);
 			//stairs.setRotation((rand()%4)*90);
 		}
 			
 		if(boundingBox.intersects(zombieBox)) {
-			sprite.move(32,0);
+			sprite.move(32,32);
 			player.damage(1);
 		}	
 
