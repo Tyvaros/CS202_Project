@@ -197,6 +197,7 @@ int main()
 	int index = xCoor+yCoor*16;
 	//main loop
 	sf::Clock clock;
+	unsigned int milisecondsSleep= 100000;
     while (window.isOpen()) {
         sf::Event event;
         //event loop
@@ -228,15 +229,30 @@ int main()
 							if (index % 16 != 15 && level[index+1] != 0)
 							sprite.move(32,0);
 						}
-
+						if(event.key.code==sf::Keyboard::Escape) {
+							window.close();
+						}
+						if(event.key.code==sf::Keyboard::LControl //we can turn this into a function that applies to all enemies
+						&&(( zombie.getPosition().x == sprite.getPosition().x  
+						&& zombie.getPosition().y == sprite.getPosition().y+32)
+						|| (zombie.getPosition().x == sprite.getPosition().x  
+						&& zombie.getPosition().y == sprite.getPosition().y-32)
+						|| (zombie.getPosition().x == sprite.getPosition().x+32  
+						&& zombie.getPosition().y == sprite.getPosition().y)
+						|| (zombie.getPosition().x == sprite.getPosition().x-32  
+						&& zombie.getPosition().y == sprite.getPosition().y))) {
+							zombie1.damage(1);
+						}
+						
 						zombie1.updatePosition(zombie,level);
-						health.setString(playerStat(s,player));
 						mist.move(0,.1);
 					default:
 						break;
 			}
         }
-		
+        std::cout << "Zombie Health" << zombie1.getHealth() <<std::endl;
+        usleep(milisecondsSleep);
+		health.setString(playerStat(s,player));
         window.clear();
         
         sf::FloatRect boundingBox = sprite.getGlobalBounds();
@@ -247,7 +263,8 @@ int main()
 		window.draw(map);
 		window.draw(stairs);
         window.draw(rectangle);
-        window.draw(zombie);
+        if(zombie1.getHealth()>0)
+			window.draw(zombie);
         window.draw(sprite);
         window.draw(mist);
         window.draw(health);
