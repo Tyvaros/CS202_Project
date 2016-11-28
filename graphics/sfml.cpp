@@ -1,4 +1,7 @@
 #include "project.h"
+#include <SFML/Graphics.hpp>
+#include "AnimatedSprite.hpp"
+#include <iostream>
 
 std::string playerStat(std::stringstream & s, Actor & a) {
     s <<"HP: "<< a.getHealth();
@@ -115,7 +118,9 @@ int main()
     srand(time(0));
     Player player;
     Enemy zombie1;
-    sf::RenderWindow window(sf::VideoMode(512,288), "Project Window");
+    sf::Vector2i screenDimensions(512,288);
+    sf::RenderWindow window(sf::VideoMode(screenDimensions.x,screenDimensions.y), "Project Window");
+    window.setFramerateLimit(60);
     
     sf::RectangleShape rectangle(sf::Vector2f(512,32));//healthbox
     rectangle.setPosition(0,256);
