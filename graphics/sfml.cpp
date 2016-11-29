@@ -1,7 +1,4 @@
 #include "project.h"
-#include <SFML/Graphics.hpp>
-#include "AnimatedSprite.hpp"
-#include <iostream>
 
 std::string playerStat(std::stringstream & s, Actor & a) {
     s <<"HP: "<< a.getHealth();
@@ -155,7 +152,7 @@ int main()
     health.setString(healthDisplay);
     health.setPosition(0,256);
     health.setCharacterSize(24);
-    health.setColor(sf::Color::Red);
+    health.setFillColor(sf::Color::Red);
     
     sf::Sprite sprite;
     sf::Texture texture;
