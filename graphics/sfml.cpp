@@ -169,11 +169,6 @@ int main()
     sf::IntRect walkingRight(32, 64, 32, 32);
     sf::IntRect walkingUp(32, 96, 32, 32);
     
-    sf::Sprite spriteWalkingDown(texture,walkingDown);
-    sf::Sprite spriteWalkingLeft(texture,walkingLeft);
-    sf::Sprite spriteWalkingRight(texture,walkingRight);
-    sf::Sprite spriteWalkingUp(texture,walkingUp);
-    
     currentSprite.setTextureRect(walkingDown);
     currentSprite.setTexture(texture);
     currentSprite.setPosition(448,64);
