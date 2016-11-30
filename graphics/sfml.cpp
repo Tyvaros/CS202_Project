@@ -154,16 +154,30 @@ int main()
     health.setCharacterSize(24);
     health.setFillColor(sf::Color::Red);
     
-    sf::Sprite sprite;
+    sf::Sprite currentSprite;
     sf::Texture texture;
     
     texture.setRepeated(false);//load the sprite for the player
-    if (!texture.loadFromFile("sprite.png")) {
+    if (!texture.loadFromFile("player.png")) {
         return -1;// error...
     }
-    sprite.setTexture(texture);
-    sprite.setPosition(448,64);
-    sprite.setScale(.5,.5);
+    
+    texture.loadFromFile("player.png");
+    
+    sf::IntRect walkingDown(32, 0, 32, 32);
+    sf::IntRect walkingLeft(32, 32, 32, 32);
+    sf::IntRect walkingRight(32, 64, 32, 32);
+    sf::IntRect walkingUp(32, 96, 32, 32);
+    
+    sf::Sprite spriteWalkingDown(texture,walkingDown);
+    sf::Sprite spriteWalkingLeft(texture,walkingLeft);
+    sf::Sprite spriteWalkingRight(texture,walkingRight);
+    sf::Sprite spriteWalkingUp(texture,walkingUp);
+    
+    currentSprite.setTextureRect(walkingDown);
+    currentSprite.setTexture(texture);
+    currentSprite.setPosition(448,64);
+    currentSprite.setScale(1,1);
     
     sf::Sprite zombie;
     sf::Texture zombieTexture;
@@ -194,8 +208,8 @@ int main()
     
     
     
-    int xCoor=(sprite.getPosition().x / 32);
-    int yCoor = (int) (sprite.getPosition().y / 32);
+    int xCoor=(currentSprite.getPosition().x / 32);
+    int yCoor = (int) (currentSprite.getPosition().y / 32);
     int index = xCoor+yCoor*16;
     //main loop
     sf::Clock clock;
@@ -210,25 +224,33 @@ int main()
                     window.close();
                     break;
                 case sf::Event::KeyPressed:
-                    xCoor=(int) (sprite.getPosition().x / 32);
-                    yCoor = (int) (sprite.getPosition().y / 32);
+                    xCoor=(int) (currentSprite.getPosition().x / 32);
+                    yCoor = (int) (currentSprite.getPosition().y / 32);
                     index = xCoor+yCoor*16;
                     
                     if(event.key.code == sf::Keyboard::W) {
-                        if (index >= 16 && level[index-16] != 0) //check window bounds and water
-                            sprite.move(0,-32);
+                        if (index >= 16 && level[index-16] != 0){ //check window bounds and water
+                            currentSprite.setTextureRect(walkingUp);
+                            currentSprite.move(0,-32);
+                        }
                     }
                     if(event.key.code == sf::Keyboard::A) {
-                        if (index % 16 != 0 && level[index-1] != 0)
-                            sprite.move(-32,0);
+                        if (index % 16 != 0 && level[index-1] != 0){
+                            currentSprite.setTextureRect(walkingLeft);
+                            currentSprite.move(-32,0);
+                        }
                     }
                     if(event.key.code == sf::Keyboard::S) {
-                        if (index <=112 && level[index+16] != 0)
-                            sprite.move(0,32);
+                        if (index <=112 && level[index+16] != 0){
+                            currentSprite.setTextureRect(walkingDown);
+                            currentSprite.move(0,32);
+                        }
                     }
                     if(event.key.code == sf::Keyboard::D) {
-                        if (index % 16 != 15 && level[index+1] != 0)
-                            sprite.move(32,0);
+                        if (index % 16 != 15 && level[index+1] != 0){
+                            currentSprite.setTextureRect(walkingRight);
+                            currentSprite.move(32,0);
+                        }
                     }
                     
                     zombie1.updatePosition(zombie,level);
@@ -241,7 +263,7 @@ int main()
         
         window.clear();
         
-        sf::FloatRect boundingBox = sprite.getGlobalBounds();
+        sf::FloatRect boundingBox = currentSprite.getGlobalBounds();
         sf::FloatRect zombieBox = zombie.getGlobalBounds();
         sf::FloatRect stairBox =stairs.getGlobalBounds();
         
@@ -250,7 +272,7 @@ int main()
         window.draw(stairs);
         window.draw(rectangle);
         window.draw(zombie);
-        window.draw(sprite);
+        window.draw(currentSprite);
         window.draw(mist);
         window.draw(health);
         window.display();
@@ -263,14 +285,14 @@ int main()
             //mapLoad(map,level);
             std::cout << "changed map" << std::endl;
             randPos(zombie,level);
-            randPos(sprite,level);
+            randPos(currentSprite,level);
             randPos(stairs,level);
             mist.setPosition(0,-32);
             //stairs.setRotation((rand()%4)*90);
         }
         
         if(boundingBox.intersects(zombieBox)) {
-            sprite.move(32,32);
+            currentSprite.move(32,32);
             player.damage(1);
         }	
         
