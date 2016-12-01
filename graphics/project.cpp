@@ -1,7 +1,7 @@
 #include "project.h"
 
 Actor::Actor() {	
-	health_=10;
+	health_=5;
 	movespeed_=.1;
 }
 	
