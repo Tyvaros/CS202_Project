@@ -106,6 +106,7 @@ void randPos(sf::Transformable &s,std::vector<int> level) {
 	}
 
 }
+
 //Important note, to make everything much easier, 
 //we should store all of the entities into a vector 
 //and then pass into the transform functions to 
@@ -251,7 +252,6 @@ int main()
 						&& zombie.getPosition().y == sprite.getPosition().y))) {
 							zombie1.damage(1);
 						}
-						
 						zombie1.updatePosition(zombie,level);
 						mist.move(0,.1);
 					default:
@@ -267,7 +267,6 @@ int main()
 		sf::FloatRect zombieBox = zombie.getGlobalBounds();
 		sf::FloatRect stairBox =stairs.getGlobalBounds();
        
-		//window.draw(map2);
 		window.draw(map);
 		window.draw(stairs);
         window.draw(rectangle);
@@ -289,17 +288,12 @@ int main()
 			randPos(sprite,level);
 			randPos(stairs,level);
 			mist.setPosition(0,-32);
-			//stairs.setRotation((rand()%4)*90);
 		}
-		//sf::Vector2f position = sprite.getPosition();
-		//position= sprite.getPosition();
 		if(boundingBox.intersects(zombieBox)) {
 			//sf::Vector2f temp = sprite.getPosition();
 			sprite.setPosition(position);
 			player.damage(1);
-			
-		}	
-
+		}
 		if(player.getHealth()<=0) {
 			std::cout << "You died" <<std::endl;
 			return 0;
