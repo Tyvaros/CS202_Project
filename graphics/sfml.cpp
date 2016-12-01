@@ -115,7 +115,7 @@ int main()
 {
 	srand(time(0));
 	Player player;
-	Enemy zombie1;
+	Enemy knight1;
     sf::RenderWindow window(sf::VideoMode(512,288), "Project Window");
     
 	sf::RectangleShape rectangle(sf::Vector2f(512,32));//healthbox
@@ -178,13 +178,19 @@ int main()
     sprite.setPosition(448,64);
     sprite.setScale(1,1);
 	
-	sf::Sprite zombie;
-	sf::Texture zombieTexture;
-	if(!zombieTexture.loadFromFile("zombie.png")) {
+	sf::Sprite knight;
+	sf::Texture knightTexture;
+	if(!knightTexture.loadFromFile("knight.png")) {
 		return -1;
 	}
-	zombie.setTexture(zombieTexture);
-	zombie.setPosition(32,32);
+	knight.setTexture(knightTexture);
+	knight.setTextureRect(walkingDown);
+	sf::Sprite knightWalkingDown(knightTexture,walkingDown);
+    sf::Sprite knightWalkingLeft(knightTexture,walkingLeft);	
+    sf::Sprite knightWalkingRight(knightTexture,walkingRight);
+    sf::Sprite knightWalkingUp(knightTexture,walkingUp);
+    
+	knight.setPosition(32,32);
 	
 	sf::Sprite stairs;
     stairs.setPosition(32,32);
@@ -260,36 +266,36 @@ int main()
 							window.close();
 						}
 						if(event.key.code==sf::Keyboard::LControl //we can turn this into a function that applies to all enemies
-						&&(( zombie.getPosition().x == sprite.getPosition().x  
-						&& zombie.getPosition().y == sprite.getPosition().y+32)
-						|| (zombie.getPosition().x == sprite.getPosition().x  
-						&& zombie.getPosition().y == sprite.getPosition().y-32)
-						|| (zombie.getPosition().x == sprite.getPosition().x+32  
-						&& zombie.getPosition().y == sprite.getPosition().y)
-						|| (zombie.getPosition().x == sprite.getPosition().x-32  
-						&& zombie.getPosition().y == sprite.getPosition().y))) {
-							zombie1.damage(1);
+						&&(( knight.getPosition().x == sprite.getPosition().x  
+						&& knight.getPosition().y == sprite.getPosition().y+32)
+						|| (knight.getPosition().x == sprite.getPosition().x  
+						&& knight.getPosition().y == sprite.getPosition().y-32)
+						|| (knight.getPosition().x == sprite.getPosition().x+32  
+						&& knight.getPosition().y == sprite.getPosition().y)
+						|| (knight.getPosition().x == sprite.getPosition().x-32  
+						&& knight.getPosition().y == sprite.getPosition().y))) {
+							knight1.damage(1);
 						}
-						zombie1.updatePosition(zombie,level);
+						knight1.updatePosition(knight,level);
 						mist.move(0,.1);
 					default:
 						break;
 			}
         }
-        std::cout << "Zombie Health" << zombie1.getHealth() <<std::endl;
+        std::cout << "knight Health" << knight1.getHealth() <<std::endl;
         usleep(milisecondsSleep);
 		health.setString(playerStat(s,player));
         window.clear();
         
         sf::FloatRect boundingBox = sprite.getGlobalBounds();
-		sf::FloatRect zombieBox = zombie.getGlobalBounds();
+		sf::FloatRect knightBox = knight.getGlobalBounds();
 		sf::FloatRect stairBox =stairs.getGlobalBounds();
        
 		window.draw(map);
 		window.draw(stairs);
         window.draw(rectangle);
-        if(zombie1.getHealth()>0)
-			window.draw(zombie);
+        if(knight1.getHealth()>0)
+			window.draw(knight);
         window.draw(sprite);
         window.draw(mist);
         window.draw(health);
@@ -302,12 +308,12 @@ int main()
 			map=mapInit(level);
 			//mapLoad(map,level);
 			std::cout << "changed map" << std::endl;
-			randPos(zombie,level);
+			randPos(knight,level);
 			randPos(sprite,level);
 			randPos(stairs,level);
 			mist.setPosition(0,-32);
 		}
-		if(boundingBox.intersects(zombieBox)) {
+		if(boundingBox.intersects(knightBox)) {
 			//sf::Vector2f temp = sprite.getPosition();
 			sprite.setPosition(position);
 			player.damage(1);
