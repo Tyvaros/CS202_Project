@@ -151,18 +151,32 @@ int main()
 	health.setString(healthDisplay);
 	health.setPosition(0,256);
 	health.setCharacterSize(24);
-	health.setColor(sf::Color::Red);
+	health.setFillColor(sf::Color::Red);
 	
 	sf::Sprite sprite;
 	sf::Texture texture;	
 	
 	texture.setRepeated(false);//load the sprite for the player
-	if (!texture.loadFromFile("sprite.png")) {
+	if (!texture.loadFromFile("player.png")) {
 			return -1;// error...
 		}
-	sprite.setTexture(texture);
-	sprite.setPosition(448,64);
-	sprite.setScale(.5,.5);
+    
+       texture.loadFromFile("player.png");
+    
+    sf::IntRect walkingDown(32, 0, 32, 32);
+    sf::IntRect walkingLeft(32, 32, 32, 32);
+    sf::IntRect walkingRight(32, 64, 32, 32);
+    sf::IntRect walkingUp(32, 96, 32, 32);
+    
+    sf::Sprite spriteWalkingDown(texture,walkingDown);
+    sf::Sprite spriteWalkingLeft(texture,walkingLeft);
+    sf::Sprite spriteWalkingRight(texture,walkingRight);
+    sf::Sprite spriteWalkingUp(texture,walkingUp);
+    
+    sprite.setTextureRect(walkingDown);
+    sprite.setTexture(texture);
+    sprite.setPosition(448,64);
+    sprite.setScale(1,1);
 	
 	sf::Sprite zombie;
 	sf::Texture zombieTexture;
@@ -217,24 +231,28 @@ int main()
 						if(event.key.code == sf::Keyboard::W) {
 							if (index >= 16 && level[index-16] != 0) //check window bounds and water 
 							sprite.move(0,-32);
+                            sprite.setTextureRect(walkingUp);
 							lastMovement=DIRECTION::DOWN;
 							
 						}
 						if(event.key.code == sf::Keyboard::A) {
 							if (index % 16 != 0 && level[index-1] != 0)
 							sprite.move(-32,0);
+                            sprite.setTextureRect(walkingLeft);
 							lastMovement=DIRECTION::LEFT;
 							
 						}
 						if(event.key.code == sf::Keyboard::S) {
 							if (index <=112 && level[index+16] != 0)
 							sprite.move(0,32);
+                            sprite.setTextureRect(walkingDown);
 							lastMovement=DIRECTION::DOWN;
 							
 						}
 						if(event.key.code == sf::Keyboard::D) {
 							if (index % 16 != 15 && level[index+1] != 0)
 							sprite.move(32,0);
+                            sprite.setTextureRect(walkingRight);
 							lastMovement=DIRECTION::RIGHT;
 							
 						}
