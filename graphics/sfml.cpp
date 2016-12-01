@@ -294,7 +294,9 @@ int main()
 		window.draw(map);
 		window.draw(stairs);
         window.draw(rectangle);
-        if(knight1.getHealth()>0)
+        if(knight1.getHealth()<0)
+			knight.setPosition(-1000,1000);
+		//else
 			window.draw(knight);
         window.draw(sprite);
         window.draw(mist);
