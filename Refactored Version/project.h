@@ -50,6 +50,7 @@ public:
 	bool load(const std::string& tileset, sf::Vector2u tileSize, std::vector<int> tiles, unsigned int width, unsigned int height);
 
 	std::vector<int>& getTiles();
+	std::string toString();
 
 private:
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
@@ -68,6 +69,7 @@ public:
 	virtual void setGameCoordinates(sf::Vector2i);
 	virtual void setObject(sf::Sprite&);
 
+	virtual std::string toString();
 	virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const;
 private:
 	sf::Vector2i m_gameCoordinates;
@@ -76,6 +78,8 @@ private:
 
 class EnemyObject : public GameObject, public Actor
 {
+public:
+	std::string toString();
 	//TODO nothing?
 };
 
@@ -83,10 +87,11 @@ class PlayerObject : public GameObject, public Actor
 {
 public:
 	DIRECTION getDirectionFacing();
-	void setDirectionFacing(DIRECTION);
 
 	std::vector<sf::IntRect>& getRects();
+	void setDirectionFacing(DIRECTION);
 
+	std::string toString();
 	virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const;
 private:
 	std::vector<sf::IntRect> m_rects; // list of rectangular vertices of sprites in texture
@@ -125,10 +130,12 @@ public:
 	bool ifCanThenMove(GameObject&, DIRECTION);
 	bool isPlayerWhereEnemiesAre();
 	bool isPlayerWhereDoorIs();
+	//void playerAttack();
 	TileMap& getTileMap();
 	void setTileMap(TileMap&);
 	sf::Vector2u getTileSize();
 	//void Level::randPos(GameObject& obj);
+	std::string toString();
 
 	virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const;
 
@@ -148,6 +155,7 @@ DIRECTION& operator++(DIRECTION&); // increment (counterclockwise)
 DIRECTION operator++(DIRECTION&, int); // Postfix increment (counterclockwise)
 DIRECTION& operator--(DIRECTION&); // decrement (clockwise)
 DIRECTION operator--(DIRECTION&, int); //Postfix decrement (clockwise)
+DIRECTION intToEnum(int);
 
 /**************************************************************/
 

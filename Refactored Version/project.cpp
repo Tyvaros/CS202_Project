@@ -7,10 +7,11 @@ Actor::Actor() {
 void Actor::setHealth(int &x) {
 	health_ = x;
 }
+
 void Actor::damage(int x) {
 	health_ -= x;
 }
-	
+
 int Actor::getHealth() {
 	return health_;
 }
@@ -98,7 +99,7 @@ DIRECTION& operator--(DIRECTION& dir) // decrement (clockwise)
 	case DIRECTION::DOWN:
 		dir = DIRECTION::LEFT;
 		break;
-		//default:
+	//default:
 		//dir remains the same
 	}
 
@@ -113,6 +114,11 @@ DIRECTION operator--(DIRECTION& dir, int) //Postfix decrement (clockwise)
 	--dir;
 
 	return temp;
+}
+
+DIRECTION intToEnum(int ii)
+{
+	return static_cast<DIRECTION>(ii);
 }
 
 bool TileMap::load(const std::string& tileset, sf::Vector2u tileSize, std::vector<int> tiles, unsigned int width, unsigned int height)
@@ -181,6 +187,22 @@ void TileMap::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	target.draw(m_vertices, states);
 }
 
+std::string TileMap::toString()
+{
+	std::stringstream temp;
+
+	temp << std::to_string(m_tiles.size()) + '\n'; // Size of vector m_tiles
+
+	for (auto it = m_tiles.begin(); it != m_tiles.end() - 1; ++it)
+	{
+		temp << std::to_string(*it) << ' '; // every element but last element in m_tiles
+	}
+
+	temp << std::to_string(m_tiles.back()); // last element in m_tiles
+
+	return temp.str();
+}
+
 sf::Vector2i& GameObject::getGameCoordinates()
 {
 	return m_gameCoordinates;
@@ -203,6 +225,11 @@ void GameObject::setObject(sf::Sprite& obj)
 	return;
 }
 
+std::string GameObject::toString()
+{
+	return std::to_string(getGameCoordinates().x) + ' ' + std::to_string(getGameCoordinates().y);
+}
+
 void GameObject::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
 	target.draw(m_obj, states);
@@ -223,9 +250,23 @@ DIRECTION PlayerObject::getDirectionFacing()
 
 void PlayerObject::setDirectionFacing(DIRECTION dir)
 {
-	// access the enum values int value which needs to correspond to their order in the vector m_rects
-	getObject().setTextureRect(m_rects[(int) dir]); // TODO maybe might not work
+	if (m_rects.size() > (int) dir && getObject().getTextureRect() != m_rects[(int)dir])
+	{
+		// access the enum values int value which needs to correspond to their order in the vector m_rects
+		getObject().setTextureRect(m_rects[(int)dir]); // TODO maybe might not work
+	}
+
 	m_directionFacing = dir;
+}
+
+std::string EnemyObject::toString()
+{
+	return std::to_string(getGameCoordinates().x) + ' ' + std::to_string(getGameCoordinates().y) + ' ' + std::to_string(getHealth());
+}
+
+std::string PlayerObject::toString()
+{
+	return std::to_string(getGameCoordinates().x) + ' ' + std::to_string(getGameCoordinates().y) + ' ' + std::to_string(getHealth()) + ' ' + std::to_string((int) getDirectionFacing());
 }
 
 std::vector<sf::IntRect>& PlayerObject::getRects()
@@ -480,6 +521,45 @@ bool Level::isPlayerWhereDoorIs()
 	return m_Player.getGameCoordinates() == m_stairs.getGameCoordinates();
 }
 
+//void Level::playerAttack()
+//{
+//	std::vector<sf::Vector2i> setOfTargetedGameCoordinates;
+//	
+//	// Add cleave stuff and such here
+//	switch (m_Player.getDirectionFacing())
+//	{
+//	case::DIRECTION::RIGHT:
+//		setOfTargetedGameCoordinates.push_back(m_Player.getGameCoordinates() + sf::Vector2i{ 1, 0 });
+//		break;
+//	case::DIRECTION::UP:
+//		setOfTargetedGameCoordinates.push_back(m_Player.getGameCoordinates() + sf::Vector2i{ 0, -1 });
+//		break;
+//	case::DIRECTION::LEFT:
+//		setOfTargetedGameCoordinates.push_back(m_Player.getGameCoordinates() + sf::Vector2i{ -1, 0 });
+//		break;
+//	case::DIRECTION::DOWN:
+//		setOfTargetedGameCoordinates.push_back(m_Player.getGameCoordinates() + sf::Vector2i{ 0, 1 });
+//		break;
+//	default:
+//		return;
+//	}
+//
+//	for (auto outerIT = setOfTargetedGameCoordinates.begin(); outerIT != setOfTargetedGameCoordinates.end(); ++outerIT)
+//	{
+//		if (outerIT->x >= 0 && outerIT->x < m_sizeOfTileMap.x && outerIT->y >= 0 && outerIT->y < outerIT->y)
+//		{
+//			for (auto it = m_Enemies.begin(); it != m_Enemies.end(); ++it)
+//			{
+//				if (it->getGameCoordinates() == *outerIT)
+//				{
+//					it->damage(1); // Only one damage for now
+//					break; // Only one enemy per game coordinate (in theory)
+//				}
+//			}
+//		}
+//	}
+//}
+
 TileMap& Level::getTileMap()
 {
 	return m_map;
@@ -515,6 +595,45 @@ void Level::draw(sf::RenderTarget &target, sf::RenderStates states) const
 
 	target.draw(m_Player);
 	return;
+}
+
+std::string Level::toString()
+{
+	std::stringstream sStream;
+	
+	sStream << m_Items.size() << '\n';
+
+	if (m_Items.size() != 0)
+	{
+		for (auto it = m_Items.begin(); it != m_Items.end() - 1; ++it)
+			sStream << it->toString() << ' ';
+
+		sStream << m_Items.back().toString();
+	}
+
+	sStream << '\n';
+
+	sStream << m_Enemies.size() << '\n';
+
+	if (m_Enemies.size() != 0)
+	{
+		for (auto it = m_Enemies.begin(); it != m_Enemies.end() - 1; ++it)
+			sStream << it->toString() << ' ';
+
+		sStream << m_Enemies.back().toString();
+	}
+
+	sStream << '\n';
+
+	sStream << m_Player.toString() << '\n';
+
+	sStream << m_stairs.toString() << '\n';
+
+	sStream << m_map.toString() << '\n';
+	
+	sStream << m_sizeOfTileMap.x << ' ' << m_sizeOfTileMap.y << '\n';
+
+	return sStream.str();
 }
 
 // Not my function so I edited it such that it made use of the Level class

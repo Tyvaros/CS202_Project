@@ -116,6 +116,8 @@ int main()
 	sf::Vector2i spriteGameCoordinates{ 0, 0 };
 	PlayerObject user;
 	user.setObject(sprite);
+	user.setDirectionFacing(DIRECTION::DOWN);
+	//user.setDirectionFacing(DIRECTION::DOWN); // Cuz first sprite is walking down
 	user.setGameCoordinates(spriteGameCoordinates);
 
 	// Important put them in the same order as the enum DIRECTION
@@ -176,7 +178,7 @@ int main()
 	{
 		sf::Event event;
 		//event loop
-		DIRECTION lastDirectionFrom;
+		DIRECTION lastDirectionFrom = DIRECTION::RIGHT; // Just so some reasonable DIRECTION is here
 
 		while (window.pollEvent(event))
 		{
@@ -186,7 +188,6 @@ int main()
 					window.close();
 					break;
 				case sf::Event::KeyPressed:
-
 					if (event.key.code == sf::Keyboard::W) {
 						if (!map.canMove_Player(DIRECTION::UP))
 							break;
@@ -215,31 +216,52 @@ int main()
 						lastDirectionFrom = DIRECTION::LEFT;
 						std::cout << "RIGHT: " << map.getPlayer().getGameCoordinates().x << ", " << map.getPlayer().getGameCoordinates().y << std::endl;
 					}
+					if (event.key.code == sf::Keyboard::Up) {
+						map.getPlayer().setDirectionFacing(DIRECTION::UP);
+						break;
+					}
+					if (event.key.code == sf::Keyboard::Left)
+					{
+						map.getPlayer().setDirectionFacing(DIRECTION::LEFT);
+						break;
+					}
+					if (event.key.code == sf::Keyboard::Down)
+					{
+						map.getPlayer().setDirectionFacing(DIRECTION::DOWN);
+						break;
+					}
+					if (event.key.code == sf::Keyboard::Right)
+					{
+						map.getPlayer().setDirectionFacing(DIRECTION::RIGHT);
+						break;
+					}
+					if (event.key.code == sf::Keyboard::P)
+					{
+						std::cout << map.toString();
+						break;
+					}
+					//if (event.key.code == sf::Keyboard::LControl)
+					//{
+					//	// TODO player attack in that direction
+					//	map.playerAttack();
+					//}
 
 					map.enemy_AI_Movement();
-					//zombie1.updatePosition(zombie, level);
 					mist.move(0, .1); // I didn't touch this
 
 				default:
 					break;
 			}
 		}
-
+	
+		health.setString(playerStat(s, map.getPlayer()));
 		window.clear();
 
-		
-
-//		sf::FloatRect boundingBox = sprite.getGlobalBounds();
-		//		sf::FloatRect zombieBox = zombie.getGlobalBounds();
-		//		sf::FloatRect door =doorBox.getGlobalBounds();
-
-		//window.draw(map2);
 		window.draw(map);
-		//		window.draw(doorBox);
 		window.draw(rectangle);
-		//        window.draw(zombie);
-		//        window.draw(sprite);
-		//        window.draw(health);
+		//	window.draw(zombie);
+		//	window.draw(sprite);
+        window.draw(health);
 		window.display();
 		//stuff needs to be drawn in the right order.
 		//VERY IMPORTANT: collision detection is done after drawing
