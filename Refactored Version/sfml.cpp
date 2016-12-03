@@ -103,10 +103,10 @@ int main()
 
 	//TODO TODONOW NOW
 
-	sf::IntRect walkingRight(32, 64, 32, 32);
-	sf::IntRect walkingUp(32, 96, 32, 32);
-	sf::IntRect walkingLeft(32, 32, 32, 32);
-	sf::IntRect walkingDown(32, 0, 32, 32);
+	sf::IntRect walkingRight(0, 64, 32, 32);
+	sf::IntRect walkingUp(0, 96, 32, 32);
+	sf::IntRect walkingLeft(0, 32, 32, 32);
+	sf::IntRect walkingDown(0, 0, 32, 32);
 
 	sprite.setTextureRect(walkingDown);
 	sprite.setTexture(texture);
