@@ -1,4 +1,6 @@
 #include "project.h"
+#include <iostream>
+#include <fstream>
 
 Actor::Actor() {	
 	health_=10;
@@ -286,6 +288,127 @@ bool Level::load(const std::string& tileset, sf::Vector2u tileSize, std::vector<
 	}
 
 	return false;
+}
+
+void Level::saveGame(Level level){
+    std::ofstream file("save.txt");
+    file << level.toString() << std::endl;
+}
+
+void Level::loadGame(Level level){
+
+    //Create all needed variables
+    std::string itemSizeString;
+    std::string placeHolder;
+    std::string enemySizeString;
+    std::string enemyXCoorString;
+    std::string enemyYCoorString;
+    std::string enemyHealthString;
+    std::string playerXCoorString;
+    std::string playerYCoorString;
+    std::string playerHealthString;
+    std::string playerDirectionFacingString;
+    std::string stairsXCoorString;
+    std::string stairsYCoorString;
+    std::string tileSizeString;
+    std::string tileTypeString;
+    
+    std::ifstream file;
+    file.open("save.txt");
+    if (file.is_open()) {
+        file >> itemSizeString;
+        int itemSizeInt = atoi(itemSizeString.c_str());
+        file >> placeHolder; //For now we only have 1 enemy If we decide to have more I will change this
+        
+        //read in enemy values
+        file >> enemySizeString;
+        file >> enemyXCoorString;
+        file >> enemyYCoorString;
+        file >> enemyHealthString;
+        
+        //Convert string enemy attributes to int values
+        int enemySizeInt = atoi(enemySizeString.c_str());
+        int enemyXCoorInt = atoi(enemyXCoorString.c_str());
+        int enemyYCoorInt = atoi(enemyYCoorString.c_str());
+        int enemyHealthInt = atoi(enemyHealthString.c_str());
+        
+        //Create enemies and fill m_Enemies
+        EnemyObject zombie;
+        zombie.setGameCoordinates(sf::Vector2i{ enemyXCoorInt, enemyYCoorInt });
+        zombie.setHealth(enemyHealthInt);
+        level.m_Enemies.resize(enemySizeInt);
+        for (int i=0; i<level.m_Enemies.size(); i++){
+            level.m_Enemies[i] = zombie;
+        }
+        
+        //read in Player values
+        file >> playerXCoorString;
+        file >> playerYCoorString;
+        file >> playerHealthString;
+        file >> playerDirectionFacingString;
+        
+        //Convert string Player attributes to int values
+        int playerXCoorInt = atoi(playerXCoorString.c_str());
+        int playerYCoorInt = atoi(playerYCoorString.c_str());
+        int playerHealthInt = atoi(playerHealthString.c_str());
+        int playerDirectionFacingInt = atoi(playerDirectionFacingString.c_str());
+        
+        //Set Player game attributes
+        level.m_Player.setGameCoordinates(sf::Vector2i{ playerXCoorInt, playerYCoorInt});
+        level.m_Player.setHealth(playerHealthInt);
+        
+//        switch (playerDirectionFacingInt) {
+//            case 0:
+//                if(playerDirectionFacingInt == 0){
+//                    level.m_Player.setDirectionFacing();
+//                }
+//                break;
+//            case 1:
+//                if(playerDirectionFacingInt == 1){
+//                    level.m_Player.setDirectionFacing(DIRECTION::UP);
+//                }
+//                break;
+//            case 2:
+//                if(playerDirectionFacingInt == 2){
+//                    level.m_Player.setDirectionFacing(DIRECTION::LEFT);
+//                }
+//                break;
+//            case 3:
+//                if(playerDirectionFacingInt == 3){
+//                    level.m_Player.setDirectionFacing(DIRECTION::DOWN);
+//                }
+//                break;
+//            default:
+//                break;
+//        }
+        
+        //Read in Stair Coordinates
+        file >> stairsXCoorString;
+        file >> stairsYCoorString;
+        
+        //Set String Stair Coordinates as Ints
+        int stairsXCoorInt = atoi(stairsXCoorString.c_str());
+        int stairsYCoorInt = atoi(stairsXCoorString.c_str());
+
+        //Set m_staris gameCoordinates
+        level.m_stairs.setGameCoordinates(sf::Vector2i{stairsXCoorInt, stairsYCoorInt});
+        
+        //Read in size of Vector for map
+        file >> tileSizeString;
+        
+        //sets tileSizeString to int value
+        int tileSizeInt = atoi(tileSizeString.c_str());
+        
+        //Load vector with old map tiles
+        std::vector<int> map(tileSizeInt);
+        for(int i=0; i<tileSizeInt; i++){
+            file >> tileTypeString;
+            int tileTypeInt = atoi(tileTypeString.c_str());
+            map[i]=tileTypeInt;
+        }
+        
+    }
+    
 }
 
 std::vector<GameObject>& Level::getItems()

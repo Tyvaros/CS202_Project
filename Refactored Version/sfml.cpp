@@ -263,6 +263,9 @@ int main()
 		//	window.draw(sprite);
         window.draw(health);
 		window.display();
+        
+        Level::saveGame(map); 
+        
 		//stuff needs to be drawn in the right order.
 		//VERY IMPORTANT: collision detection is done after drawing
 		//	if it's done before the bounds are not defined
