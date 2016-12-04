@@ -318,7 +318,6 @@ void Level::loadGame(Level level){
     if (file.is_open()) {
         file >> itemSizeString;
         int itemSizeInt = atoi(itemSizeString.c_str());
-        file >> placeHolder; //For now we only have 1 enemy If we decide to have more I will change this
         
         //read in enemy values
         file >> enemySizeString;

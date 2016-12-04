@@ -264,7 +264,8 @@ int main()
         window.draw(health);
 		window.display();
         
-        Level::saveGame(map); 
+        Level::saveGame(map);
+        Level::loadGame(map); 
         
 		//stuff needs to be drawn in the right order.
 		//VERY IMPORTANT: collision detection is done after drawing
