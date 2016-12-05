@@ -331,7 +331,6 @@ void Level::loadGame(Level level) {
 	std::string tileTypeString;
 
 	std::ifstream file;
-    std::ofstream output("text.txt");
 	file.open("save.txt");
 	if (file.is_open()) {
 		file >> itemSizeString;
