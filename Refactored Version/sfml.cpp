@@ -55,6 +55,12 @@ int main()
 
 	sf::Sprite sprite;
 	sf::Texture texture;
+    
+    sf::Texture endGameTexture;
+    sf::Sprite endGameSprite;
+    endGameTexture.loadFromFile("gameOver.png");
+    endGameSprite.setTexture(endGameTexture);
+    
 
 	texture.setRepeated(false);//load the sprite for the player
 	if (!texture.loadFromFile("player.png")) {
@@ -241,6 +247,8 @@ int main()
 		//	window.draw(zombie);
 		//	window.draw(sprite);
         window.draw(health);
+        window.draw(endGameSprite);
+        endGameSprite.setColor(sf::Color(255, 255, 255, 0));
 		window.display();
 		//stuff needs to be drawn in the right order.
 		//VERY IMPORTANT: collision detection is done after drawing
@@ -271,8 +279,8 @@ int main()
 		}
 
 		if (map.getPlayer().getHealth() <= 0) {
-			std::cout << "You died" << std::endl;
-			return 0;
+            endGameSprite.setColor(sf::Color(255, 255, 255, 255));
+//            return 0;
 		}
 
 		s.str(""); //clear the health string
