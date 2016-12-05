@@ -305,6 +305,11 @@ bool Level::load(const std::string& tileset, sf::Vector2u tileSize, std::vector<
 	return false;
 }
 
+void Level::saveGame(Level level){
+    std::ofstream file("save.txt");
+    file << level.toString() << std::endl;
+}
+
 void Level::loadGame(Level level){
     
     //Create all needed variables
