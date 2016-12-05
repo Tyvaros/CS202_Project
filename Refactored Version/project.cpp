@@ -23,8 +23,6 @@ void Actor::heal(int x)
 	health_ += x;
 }
 
-/***********************************************************/
-
 // Reverse DIRECTION
 DIRECTION& operator-(DIRECTION& dir) //reverse DIRECTION
 {
@@ -302,64 +300,88 @@ bool Level::load(const std::string& tileset, sf::Vector2u tileSize, std::vector<
 		return true;
 	}
 
+	std::cout << "Failed to load" << std::endl;
 	return false;
 }
 
-void Level::saveGame(Level level) {
+void Level::saveGame(Level& level) {
 	std::ofstream file("save.txt");
 	file << level.toString() << std::endl;
 }
 
 
-void Level::loadGame(Level level) {
-
+void Level::loadGame(Level& level) {
 	//Create all needed variables
 	std::string itemSizeString;
+	std::string tempItemXCoorString;
+	std::string tempItemYCoorString;
 	std::string placeHolder;
 	std::string enemySizeString;
-	std::string enemyXCoorString;
-	std::string enemyYCoorString;
-	std::string enemyHealthString;
-    std::string enemyDirectionFacingString;
+	std::string tempEnemyXCoorString;
+	std::string tempEnemyYCoorString;
+	std::string tempEnemyHealthString;
+	std::string tempEnemyDirectionFacingString;
 	std::string playerXCoorString;
 	std::string playerYCoorString;
 	std::string playerHealthString;
 	std::string playerDirectionFacingString;
 	std::string stairsXCoorString;
 	std::string stairsYCoorString;
-	std::string tileSizeString;
+	std::string tileListSizeString;
 	std::string tileTypeString;
+	std::string levelWidthString;
+	std::string levelHeightString;
 
 	std::ifstream file;
-    std::ofstream output("text.txt");
 	file.open("save.txt");
 	if (file.is_open()) {
+
 		file >> itemSizeString;
 		int itemSizeInt = atoi(itemSizeString.c_str());
 
+		level.m_Items.resize(itemSizeInt);
+
+		for (int i = 0; i < itemSizeInt; ++i)
+		{
+			file >> tempItemXCoorString;
+			file >> tempItemYCoorString;
+
+			int tempItemXCoorInt = atoi(tempItemXCoorString.c_str());
+			int tempItemYCoorInt = atoi(tempItemYCoorString.c_str());
+
+			// Set Game Coordinates
+			level.m_Items[i].setGameCoordinates(sf::Vector2i{ tempItemXCoorInt, tempItemYCoorInt });
+
+			// Actually change the drawing coordinates of the Sprite to match the GameCoordinates
+			level.m_Items[i].getObject().setPosition(sf::Vector2f{ 1.0f * tempItemXCoorInt * level.m_tileSize.x , 1.0f * tempItemYCoorInt * level.m_tileSize.y });
+		}
+
 		//read in enemy values
 		file >> enemySizeString;
-		file >> enemyXCoorString;
-		file >> enemyYCoorString;
-		file >> enemyHealthString;
-        file >> enemyDirectionFacingString;
-        
-
-		//Convert string enemy attributes to int values
 		int enemySizeInt = atoi(enemySizeString.c_str());
-		int enemyXCoorInt = atoi(enemyXCoorString.c_str());
-		int enemyYCoorInt = atoi(enemyYCoorString.c_str());
-		int enemyHealthInt = atoi(enemyHealthString.c_str());
-        int enemyDirectionFacingInt = atoi(enemyDirectionFacingString.c_str());
 
-		//Create enemies and fill m_Enemies
-		ActorObject enemy;
-		enemy.setGameCoordinates(sf::Vector2i{ enemyXCoorInt, enemyYCoorInt });
-		enemy.setHealth(enemyHealthInt);
 		level.m_Enemies.resize(enemySizeInt);
-        enemy.setDirectionFacing(intToEnum(enemyDirectionFacingInt));
-		for (int i = 0; i<level.m_Enemies.size(); i++) {
-			level.m_Enemies[i] = enemy;
+
+		for (int i = 0; i < enemySizeInt; ++i)
+		{
+			file >> tempEnemyXCoorString;
+			file >> tempEnemyYCoorString;
+			file >> tempEnemyHealthString;
+			file >> tempEnemyDirectionFacingString;
+
+			//Convert string enemy attributes to int values
+			int tempEnemyXCoorInt = atoi(tempEnemyXCoorString.c_str());
+			int tempEnemyYCoorInt = atoi(tempEnemyYCoorString.c_str());
+			int tempEnemyHealthInt = atoi(tempEnemyHealthString.c_str());
+			int tempEnemyDirectionFacingInt = atoi(tempEnemyDirectionFacingString.c_str());
+
+			// TODO function that sets Sprite (Sprite can't be instantiated here and passed to enemies)
+			level.m_Enemies[i].setGameCoordinates(sf::Vector2i{ tempEnemyXCoorInt, tempEnemyYCoorInt });
+			level.m_Enemies[i].setHealth(tempEnemyHealthInt);
+			level.m_Enemies[i].setDirectionFacing(intToEnum(tempEnemyDirectionFacingInt));
+
+			// Actually change the drawing coordinates of the Sprite to match the GameCoordinates
+			level.m_Enemies[i].getObject().setPosition(sf::Vector2f{ 1.0f * tempEnemyXCoorInt * level.m_tileSize.x , 1.0f * tempEnemyYCoorInt * level.m_tileSize.y });
 		}
 
 		//read in Player values
@@ -379,6 +401,9 @@ void Level::loadGame(Level level) {
 		level.m_Player.setHealth(playerHealthInt);
 		level.m_Player.setDirectionFacing(intToEnum(playerDirectionFacingInt));
 
+		// Actually change the drawing coordinates of the Sprite to match the GameCoordinates
+		level.m_Player.getObject().setPosition(sf::Vector2f{ 1.0f * playerXCoorInt * level.m_tileSize.x , 1.0f * playerYCoorInt * level.m_tileSize.y });
+
 		//Read in Stair Coordinates
 		file >> stairsXCoorString;
 		file >> stairsYCoorString;
@@ -386,24 +411,42 @@ void Level::loadGame(Level level) {
 		//Set String Stair Coordinates as Ints
 		int stairsXCoorInt = atoi(stairsXCoorString.c_str());
 		int stairsYCoorInt = atoi(stairsXCoorString.c_str());
-        
+
 		//Set m_staris gameCoordinates
 		level.m_stairs.setGameCoordinates(sf::Vector2i{ stairsXCoorInt, stairsYCoorInt });
 
+		// Actually change the drawing coordinates of the Sprite to match the GameCoordinates
+		level.m_stairs.getObject().setPosition(sf::Vector2f{ 1.0f * stairsXCoorInt * level.m_tileSize.x , 1.0f * stairsYCoorInt * level.m_tileSize.y });
+
 		//Read in size of Vector for map
-		file >> tileSizeString;
+		file >> tileListSizeString;
 
 		//sets tileSizeString to int value
-		int tileSizeInt = atoi(tileSizeString.c_str());
+		int tileListSizeInt = atoi(tileListSizeString.c_str());
+
+		std::cout << tileListSizeInt << std::endl;
+		std::cin >> tileListSizeString; // TODO REMOVE ME
 
 		//Load vector with old map tiles
-		std::vector<int> savedMap(tileSizeInt);
-		for (int i = 0; i<tileSizeInt; i++) {
+		std::vector<int> map;
+
+		for (int i = 0; i < tileListSizeInt; ++i) {
 			file >> tileTypeString;
 			int tileTypeInt = atoi(tileTypeString.c_str());
-			savedMap[i] = tileTypeInt;
+			map.push_back(tileTypeInt);
 		}
 
+		file >> levelWidthString;
+		file >> levelHeightString;
+
+		int levelWidth = atoi(levelWidthString.c_str());
+		int levelHeight = atoi(levelHeightString.c_str());
+
+		TileMap tempTileMap;
+		tempTileMap.load("tileset.png", sf::Vector2u{32, 32}, map, levelWidth, levelHeight);
+		level.getTileMap() = tempTileMap;
+
+		std::cout << "Load:" << std::endl << level.toString() << std::endl;
 	}
 
 }
@@ -529,13 +572,13 @@ bool Level::canMove(GameObject& obj, DIRECTION dir)
 	switch (dir)
 	{
 	case DIRECTION::RIGHT:
-		return (x != tileMapWidth - 1) && tileIsWalkable(x + 1, y); // Not on right side
+		return (x < tileMapWidth - 1) && tileIsWalkable(x + 1, y); // Not on right side
 	case DIRECTION::UP:
-		return (y != 0) && tileIsWalkable(x, y - 1); // Not on top
+		return (y > 0) && tileIsWalkable(x, y - 1); // Not on top
 	case DIRECTION::LEFT:
-		return (x != 0) && tileIsWalkable(x - 1, y); // Not on left side
+		return (x > 0) && tileIsWalkable(x - 1, y); // Not on left side
 	case DIRECTION::DOWN:
-		return (y != tileMapHeight - 1) && tileIsWalkable(x, y + 1); // Not on bottom
+		return (y < tileMapHeight - 1) && tileIsWalkable(x, y + 1); // Not on bottom
 	default:
 		std::cout << "Invalid direction." << std::endl;
 		return false;
@@ -585,27 +628,6 @@ void Level::move(GameObject& obj, DIRECTION dir)
 	obj.getObject().setPosition(obj.getObject().getPosition().x + move.x, obj.getObject().getPosition().y + move.y);
 }
 
-//void Level::moveToCoordinates(GameObject& obj, sf::Vector2i coordinates)
-//{
-//	std::cout << obj.getPosition().x << ", " << obj.getPosition().y << std::endl;
-//	std::cout << obj.getOrigin().x << ", " << obj.getOrigin().y << std::endl;
-//
-//	obj.setPosition(32.0f, 0.0f);
-//	obj.setGameCoordinates(sf::Vector2i{ 0, 0 });
-//
-//	std::cout << obj.getPosition().x << ", " << obj.getPosition().y << std::endl;
-//
-//	/*std::cout << obj.getPosition().x << ", " << obj.getPosition().y << std::endl;
-//	obj.setGameCoordinates(coordinates);
-//	obj.setPosition(coordinates.x*m_tileSize.x, coordinates.y*m_tileSize.y);
-//	std::cout << obj.getPosition().x << ", " << obj.getPosition().y << std::endl;*/
-//}
-//
-//void Level::moveToCoordinates(GameObject& obj,int x, int y)
-//{
-//	moveToCoordinates(obj, sf::Vector2i{ x, y });
-//}
-
 bool Level::ifCanThenMove_Enemy(int index, DIRECTION dir)
 {
 	m_Enemies[index].setDirectionFacing(dir);
@@ -649,44 +671,52 @@ bool Level::isPlayerWhereDoorIs()
 	return m_Player.getGameCoordinates() == m_stairs.getGameCoordinates();
 }
 
-//void Level::playerAttack()
-//{
-//	std::vector<sf::Vector2i> setOfTargetedGameCoordinates;
-//	
-//	// Add cleave stuff and such here
-//	switch (m_Player.getDirectionFacing())
-//	{
-//	case::DIRECTION::RIGHT:
-//		setOfTargetedGameCoordinates.push_back(m_Player.getGameCoordinates() + sf::Vector2i{ 1, 0 });
-//		break;
-//	case::DIRECTION::UP:
-//		setOfTargetedGameCoordinates.push_back(m_Player.getGameCoordinates() + sf::Vector2i{ 0, -1 });
-//		break;
-//	case::DIRECTION::LEFT:
-//		setOfTargetedGameCoordinates.push_back(m_Player.getGameCoordinates() + sf::Vector2i{ -1, 0 });
-//		break;
-//	case::DIRECTION::DOWN:
-//		setOfTargetedGameCoordinates.push_back(m_Player.getGameCoordinates() + sf::Vector2i{ 0, 1 });
-//		break;
-//	default:
-//		return;
-//	}
-//
-//	for (auto outerIT = setOfTargetedGameCoordinates.begin(); outerIT != setOfTargetedGameCoordinates.end(); ++outerIT)
-//	{
-//		if (outerIT->x >= 0 && outerIT->x < m_sizeOfTileMap.x && outerIT->y >= 0 && outerIT->y < outerIT->y)
-//		{
-//			for (auto it = m_Enemies.begin(); it != m_Enemies.end(); ++it)
-//			{
-//				if (it->getGameCoordinates() == *outerIT)
-//				{
-//					it->damage(1); // Only one damage for now
-//					break; // Only one enemy per game coordinate (in theory)
-//				}
-//			}
-//		}
-//	}
-//}
+void Level::playerAttack()
+{
+	std::vector<sf::Vector2i> setOfTargetedGameCoordinates;
+
+	// Add cleave stuff and such here
+	switch (m_Player.getDirectionFacing())
+	{
+	case::DIRECTION::RIGHT:
+		std::cout << "ATTACK RIGHT" << std::endl;
+		setOfTargetedGameCoordinates.push_back(m_Player.getGameCoordinates() + sf::Vector2i{ 1, 0 });
+		break;
+	case::DIRECTION::UP:
+		std::cout << "ATTACK UP" << std::endl;
+		setOfTargetedGameCoordinates.push_back(m_Player.getGameCoordinates() + sf::Vector2i{ 0, -1 });
+		break;
+	case::DIRECTION::LEFT:
+		std::cout << "ATTACK LEFT" << std::endl;
+		setOfTargetedGameCoordinates.push_back(m_Player.getGameCoordinates() + sf::Vector2i{ -1, 0 });
+		break;
+	case::DIRECTION::DOWN:
+		std::cout << "ATTACK DOWN" << std::endl;
+		setOfTargetedGameCoordinates.push_back(m_Player.getGameCoordinates() + sf::Vector2i{ 0, 1 });
+		break;
+	default:
+		return;
+	}
+
+	// Iterate through all targeted Game Coordinates
+	for (auto outerIT = setOfTargetedGameCoordinates.begin(); outerIT != setOfTargetedGameCoordinates.end(); ++outerIT)
+	{
+		// Check all target coordinates to see if any Enemies are at those Game Coordinates
+		if (outerIT->x >= 0 && outerIT->x < m_sizeOfTileMap.x && outerIT->y >= 0 && outerIT->y < m_sizeOfTileMap.y)
+		{
+			// Iterate through the list of Enemies
+			for (auto it = m_Enemies.begin(); it != m_Enemies.end(); ++it)
+			{
+				// If the Enemies coordinates are equal to the current target coordinate
+				if (it->getGameCoordinates() == *outerIT)
+				{
+					it->damage(1); // Only one damage for now  // TODO Variable damage
+					break; // Only one enemy per game coordinate (in theory)
+				}
+			}
+		}
+	}
+}
 
 TileMap& Level::getTileMap()
 {
@@ -827,23 +857,3 @@ std::string Level::toString()
 
 	return sStream.str();
 }
-
-// Not my function so I edited it such that it made use of the Level class
-//void Level::randPos(GameObject& obj) {
-//	int xCoor;
-//	int yCoor;
-//
-//	while (true) {//This prevents the new position to be on an impassible space	
-//		xCoor = rand() % m_sizeOfTileMap.x;
-//		yCoor = rand() % m_sizeOfTileMap.y;
-//
-//		if (m_map.getTiles()[xCoor + yCoor * m_sizeOfTileMap.x] != 0)
-//		{
-//			moveToCoordinates(obj, sf::Vector2i{xCoor, yCoor});
-//			break;
-//		}
-//	}
-//
-//}
-
-/***********************************************************/

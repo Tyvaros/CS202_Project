@@ -199,17 +199,30 @@ int main()
 						map.getPlayer().setDirectionFacing(DIRECTION::RIGHT);
 						break;
 					}
-					if (event.key.code == sf::Keyboard::P)
+					if (event.key.code == sf::Keyboard::P) // Level gen
 					{
 						map.levelGen();
 						std::cout << map.toString();
 						break;
 					}
-					//if (event.key.code == sf::Keyboard::LControl)
-					//{
-					//	// TODO player attack in that direction
-					//	map.playerAttack();
-					//}
+					if (event.key.code == sf::Keyboard::L) // Load
+					{
+						std::cout << "Game loaded" << std::endl;
+						Level::loadGame(map);
+						break;
+					}
+					if (event.key.code == sf::Keyboard::O) // Save
+					{
+						std::cout << "Game saved." << std::endl;
+						Level::saveGame(map);
+						break;
+					}
+					if (event.key.code == sf::Keyboard::LControl)
+					{
+						// TODO player attack in that direction
+						map.playerAttack();
+						std::cout << map.getEnemies()[0].getHealth() << std::endl;
+					}
 
 					map.enemy_AI_Movement();
 					mist.move(0, .1); // I didn't touch this
@@ -229,8 +242,6 @@ int main()
 		//	window.draw(sprite);
         window.draw(health);
 		window.display();
-        Level::saveGame(map);
-        Level::loadGame(map); 
 		//stuff needs to be drawn in the right order.
 		//VERY IMPORTANT: collision detection is done after drawing
 		//	if it's done before the bounds are not defined

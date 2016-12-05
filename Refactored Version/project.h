@@ -101,8 +101,8 @@ class Level : public sf::Drawable, public sf::Transformable
 {
 public:
 	bool load(const std::string& tileset, sf::Vector2u tileSize, std::vector<int> tiles, unsigned int width, unsigned int height);
-	static void saveGame(Level level);
-	static void loadGame(Level level);
+	static void saveGame(Level& level);
+	static void loadGame(Level& level);
 
 	std::vector<GameObject>& getItems();
 	std::vector<ActorObject>& getEnemies();
@@ -130,7 +130,7 @@ public:
 	bool ifCanThenMove(GameObject&, DIRECTION);
 	bool isPlayerWhereEnemiesAre();
 	bool isPlayerWhereDoorIs();
-	//void playerAttack();
+	void playerAttack();
 	TileMap& getTileMap();
 	void setTileMap(TileMap&);
 	sf::Vector2u getTileSize();
@@ -139,7 +139,6 @@ public:
 	void levelGen();
 	void moveToCoordinates(GameObject& obj, sf::Vector2i coordinates);
 	void moveToCoordinates(GameObject& obj, int x, int y);
-
 
 	std::string toString();
 
