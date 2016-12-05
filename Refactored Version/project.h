@@ -44,6 +44,8 @@ private:
 // Needs to correspond to the order put into the array for different direction sprites
 enum class DIRECTION { RIGHT, UP, LEFT, DOWN };
 
+
+
 class TileMap : public sf::Drawable, public sf::Transformable
 {
 public:
@@ -104,6 +106,8 @@ class Level : public sf::Drawable, public sf::Transformable
 {
 public:
 	bool load(const std::string& tileset, sf::Vector2u tileSize, std::vector<int> tiles, unsigned int width, unsigned int height);
+    static void saveGame(Level level);
+    static void loadGame(Level level);
 
 	std::vector<GameObject>& getItems();
 	std::vector<EnemyObject>& getEnemies();
