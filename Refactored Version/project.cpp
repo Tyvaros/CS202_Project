@@ -355,32 +355,8 @@ void Level::loadGame(Level level){
         //Set Player game attributes
         level.m_Player.setGameCoordinates(sf::Vector2i{ playerXCoorInt, playerYCoorInt});
         level.m_Player.setHealth(playerHealthInt);
-        
-        switch (playerDirectionFacingInt) {
-            case 0:
-                if(playerDirectionFacingInt == 0){
-                    level.m_Player.setDirectionFacing(DIRECTION::RIGHT);
-                }
-                break;
-            case 1:
-                if(playerDirectionFacingInt == 1){
-                    level.m_Player.setDirectionFacing(DIRECTION::UP);
-                }
-                break;
-            case 2:
-                if(playerDirectionFacingInt == 2){
-                    level.m_Player.setDirectionFacing(DIRECTION::LEFT);
-                }
-                break;
-            case 3:
-                if(playerDirectionFacingInt == 3){
-                    level.m_Player.setDirectionFacing(DIRECTION::DOWN);
-                }
-                break;
-            default:
-                break;
-        }
-        
+        level.m_Player.setDirectionFacing(intToEnum(playerDirectionFacingInt));
+                
         //Read in Stair Coordinates
         file >> stairsXCoorString;
         file >> stairsYCoorString;
