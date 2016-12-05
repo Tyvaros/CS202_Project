@@ -314,6 +314,7 @@ void Level::loadGame(Level level){
     std::string enemyXCoorString;
     std::string enemyYCoorString;
     std::string enemyHealthString;
+    std::string enemyDirectionFacingString;
     std::string playerXCoorString;
     std::string playerYCoorString;
     std::string playerHealthString;
@@ -334,17 +335,20 @@ void Level::loadGame(Level level){
         file >> enemyXCoorString;
         file >> enemyYCoorString;
         file >> enemyHealthString;
+        file >> enemyDirectionFacingString;
         
         //Convert string enemy attributes to int values
         int enemySizeInt = atoi(enemySizeString.c_str());
         int enemyXCoorInt = atoi(enemyXCoorString.c_str());
         int enemyYCoorInt = atoi(enemyYCoorString.c_str());
         int enemyHealthInt = atoi(enemyHealthString.c_str());
+        int enemyDirectionFacingInt = atoi(enemyDirectionFacingString.c_str());
         
         //Create enemies and fill m_Enemies
         ActorObject enemy;
         enemy.setGameCoordinates(sf::Vector2i{ enemyXCoorInt, enemyYCoorInt });
         enemy.setHealth(enemyHealthInt);
+        enemy.setDirectionFacing(intToEnum(enemyDirectionFacingInt)); 
         level.m_Enemies.resize(enemySizeInt);
         for (int i=0; i<level.m_Enemies.size(); i++){
             level.m_Enemies[i] = enemy;
