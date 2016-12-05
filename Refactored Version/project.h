@@ -11,15 +11,15 @@
 #include <vector>
 #include <iterator>
 
-class Actor 
+class Actor
 {
 public:
-	Actor(); 
-	void setHealth(int & x); 
+	Actor();
+	void setHealth(int & x);
 	void damage(int x);
 	int getHealth();
 	void heal(int);
-	
+
 private:
 	int health_;
 	//int movespeed_;
@@ -101,8 +101,8 @@ class Level : public sf::Drawable, public sf::Transformable
 {
 public:
 	bool load(const std::string& tileset, sf::Vector2u tileSize, std::vector<int> tiles, unsigned int width, unsigned int height);
-    static void saveGame(Level level);
-    static void loadGame(Level level);
+	static void saveGame(Level level);
+	static void loadGame(Level level);
 
 	std::vector<GameObject>& getItems();
 	std::vector<ActorObject>& getEnemies();
@@ -125,6 +125,7 @@ public:
 	//void moveToCoordinates(GameObject&, sf::Vector2i);
 	//void moveToCoordinates(GameObject&, int x, int y);
 	bool ifCanThenMove_Enemy(int index, DIRECTION);
+	bool ifCanThenMove_Actor(ActorObject&, DIRECTION);
 	bool ifCanThenMove_Player(DIRECTION);
 	bool ifCanThenMove(GameObject&, DIRECTION);
 	bool isPlayerWhereEnemiesAre();

@@ -2,8 +2,8 @@
 #include <iostream>
 #include <fstream>
 
-Actor::Actor() {	
-	health_=10;
+Actor::Actor() {
+	health_ = 10;
 }
 
 void Actor::setHealth(int &x) {
@@ -30,20 +30,20 @@ DIRECTION& operator-(DIRECTION& dir) //reverse DIRECTION
 {
 	switch (dir)
 	{
-		case DIRECTION::RIGHT:
-			dir = DIRECTION::LEFT;
-			break;
-		case DIRECTION::UP:
-			dir = DIRECTION::DOWN;
-			break;
-		case DIRECTION::LEFT:
-			dir = DIRECTION::RIGHT;
-			break;
-		case DIRECTION::DOWN:
-			dir = DIRECTION::UP;
-			break;
+	case DIRECTION::RIGHT:
+		dir = DIRECTION::LEFT;
+		break;
+	case DIRECTION::UP:
+		dir = DIRECTION::DOWN;
+		break;
+	case DIRECTION::LEFT:
+		dir = DIRECTION::RIGHT;
+		break;
+	case DIRECTION::DOWN:
+		dir = DIRECTION::UP;
+		break;
 		//default:
-			//dir remains the same
+		//dir remains the same
 	}
 
 	return dir;
@@ -54,20 +54,20 @@ DIRECTION& operator++(DIRECTION& dir) // increment (counterclockwise)
 {
 	switch (dir)
 	{
-		case DIRECTION::RIGHT:
-			dir = DIRECTION::UP;
-			break;
-		case DIRECTION::UP:
-			dir = DIRECTION::LEFT;
-			break;
-		case DIRECTION::LEFT:
-			dir = DIRECTION::DOWN;
-			break;
-		case DIRECTION::DOWN:
-			dir = DIRECTION::RIGHT;
-			break;
+	case DIRECTION::RIGHT:
+		dir = DIRECTION::UP;
+		break;
+	case DIRECTION::UP:
+		dir = DIRECTION::LEFT;
+		break;
+	case DIRECTION::LEFT:
+		dir = DIRECTION::DOWN;
+		break;
+	case DIRECTION::DOWN:
+		dir = DIRECTION::RIGHT;
+		break;
 		//default:
-			//dir remains the same
+		//dir remains the same
 	}
 
 	return dir;
@@ -101,7 +101,7 @@ DIRECTION& operator--(DIRECTION& dir) // decrement (clockwise)
 	case DIRECTION::DOWN:
 		dir = DIRECTION::LEFT;
 		break;
-	//default:
+		//default:
 		//dir remains the same
 	}
 
@@ -262,7 +262,7 @@ DIRECTION ActorObject::getDirectionFacing()
 
 void ActorObject::setDirectionFacing(DIRECTION dir)
 {
-	if (m_rects.size() > (int) dir && getObject().getTextureRect() != m_rects[(int)dir])
+	if (m_rects.size() > (int)dir && getObject().getTextureRect() != m_rects[(int)dir])
 	{
 		// access the enum values int value which needs to correspond to their order in the vector m_rects
 		getObject().setTextureRect(m_rects[(int)dir]); // TODO maybe might not work
@@ -283,7 +283,7 @@ void ActorObject::setSpritePosition(const sf::Vector2f& position)
 
 std::string ActorObject::toString()
 {
-	return std::to_string(getGameCoordinates().x) + ' ' + std::to_string(getGameCoordinates().y) + ' ' + std::to_string(getHealth()) + ' ' + std::to_string((int) getDirectionFacing());
+	return std::to_string(getGameCoordinates().x) + ' ' + std::to_string(getGameCoordinates().y) + ' ' + std::to_string(getHealth()) + ' ' + std::to_string((int)getDirectionFacing());
 }
 
 std::vector<sf::IntRect>& ActorObject::getRects()
@@ -305,104 +305,101 @@ bool Level::load(const std::string& tileset, sf::Vector2u tileSize, std::vector<
 	return false;
 }
 
-void Level::saveGame(Level level){
-    std::ofstream file("save.txt");
-    file << level.toString() << std::endl;
+void Level::saveGame(Level level) {
+	std::ofstream file("save.txt");
+	file << level.toString() << std::endl;
 }
 
-void Level::loadGame(Level level){
-    
-    //Create all needed variables
-    std::string itemSizeString;
-    std::string placeHolder;
-    std::string enemySizeString;
-    std::string enemyXCoorString;
-    std::string enemyYCoorString;
-    std::string enemyHealthString;
-    std::string enemyDirectionFacingString;
-    std::string playerXCoorString;
-    std::string playerYCoorString;
-    std::string playerHealthString;
-    std::string playerDirectionFacingString;
-    std::string stairsXCoorString;
-    std::string stairsYCoorString;
-    std::string tileSizeString;
-    std::string tileTypeString;
-    
-    std::ifstream file;
-    file.open("save.txt");
-    if (file.is_open()) {
-        file >> itemSizeString;
-        int itemSizeInt = atoi(itemSizeString.c_str());
-        
-        //read in enemy values
-        file >> enemySizeString;
-        file >> enemyXCoorString;
-        file >> enemyYCoorString;
-        file >> enemyHealthString;
-        file >> enemyDirectionFacingString;
-        
-        //Convert string enemy attributes to int values
-        int enemySizeInt = atoi(enemySizeString.c_str());
-        int enemyXCoorInt = atoi(enemyXCoorString.c_str());
-        int enemyYCoorInt = atoi(enemyYCoorString.c_str());
-        int enemyHealthInt = atoi(enemyHealthString.c_str());
-        int enemyDirectionFacingInt = atoi(enemyDirectionFacingString.c_str());
-        
-        //Create enemies and fill m_Enemies
-        ActorObject enemy;
-        enemy.setGameCoordinates(sf::Vector2i{ enemyXCoorInt, enemyYCoorInt });
-        enemy.setHealth(enemyHealthInt);
-        enemy.setDirectionFacing(intToEnum(enemyDirectionFacingInt)); 
-        level.m_Enemies.resize(enemySizeInt);
-        for (int i=0; i<level.m_Enemies.size(); i++){
-            level.m_Enemies[i] = enemy;
-        }
-        
-        //read in Player values
-        file >> playerXCoorString;
-        file >> playerYCoorString;
-        file >> playerHealthString;
-        file >> playerDirectionFacingString;
-        
-        //Convert string Player attributes to int values
-        int playerXCoorInt = atoi(playerXCoorString.c_str());
-        int playerYCoorInt = atoi(playerYCoorString.c_str());
-        int playerHealthInt = atoi(playerHealthString.c_str());
-        int playerDirectionFacingInt = atoi(playerDirectionFacingString.c_str());
-        
-        //Set Player game attributes
-        level.m_Player.setGameCoordinates(sf::Vector2i{ playerXCoorInt, playerYCoorInt});
-        level.m_Player.setHealth(playerHealthInt);
-        level.m_Player.setDirectionFacing(intToEnum(playerDirectionFacingInt));
-        
-        //Read in Stair Coordinates
-        file >> stairsXCoorString;
-        file >> stairsYCoorString;
-        
-        //Set String Stair Coordinates as Ints
-        int stairsXCoorInt = atoi(stairsXCoorString.c_str());
-        int stairsYCoorInt = atoi(stairsXCoorString.c_str());
-        
-        //Set m_staris gameCoordinates
-        level.m_stairs.setGameCoordinates(sf::Vector2i{stairsXCoorInt, stairsYCoorInt});
-        
-        //Read in size of Vector for map
-        file >> tileSizeString;
-        
-        //sets tileSizeString to int value
-        int tileSizeInt = atoi(tileSizeString.c_str());
-        
-        //Load vector with old map tiles
-        std::vector<int> map(tileSizeInt);
-        for(int i=0; i<tileSizeInt; i++){
-            file >> tileTypeString;
-            int tileTypeInt = atoi(tileTypeString.c_str());
-            map[i]=tileTypeInt;
-        }
-        
-    }
-    
+
+void Level::loadGame(Level level) {
+
+	//Create all needed variables
+	std::string itemSizeString;
+	std::string placeHolder;
+	std::string enemySizeString;
+	std::string enemyXCoorString;
+	std::string enemyYCoorString;
+	std::string enemyHealthString;
+	std::string playerXCoorString;
+	std::string playerYCoorString;
+	std::string playerHealthString;
+	std::string playerDirectionFacingString;
+	std::string stairsXCoorString;
+	std::string stairsYCoorString;
+	std::string tileSizeString;
+	std::string tileTypeString;
+
+	std::ifstream file;
+	file.open("save.txt");
+	if (file.is_open()) {
+		file >> itemSizeString;
+		int itemSizeInt = atoi(itemSizeString.c_str());
+
+		//read in enemy values
+		file >> enemySizeString;
+		file >> enemyXCoorString;
+		file >> enemyYCoorString;
+		file >> enemyHealthString;
+
+		//Convert string enemy attributes to int values
+		int enemySizeInt = atoi(enemySizeString.c_str());
+		int enemyXCoorInt = atoi(enemyXCoorString.c_str());
+		int enemyYCoorInt = atoi(enemyYCoorString.c_str());
+		int enemyHealthInt = atoi(enemyHealthString.c_str());
+
+		//Create enemies and fill m_Enemies
+		ActorObject enemy;
+		enemy.setGameCoordinates(sf::Vector2i{ enemyXCoorInt, enemyYCoorInt });
+		enemy.setHealth(enemyHealthInt);
+		level.m_Enemies.resize(enemySizeInt);
+		for (int i = 0; i<level.m_Enemies.size(); i++) {
+			level.m_Enemies[i] = enemy;
+		}
+
+		//read in Player values
+		file >> playerXCoorString;
+		file >> playerYCoorString;
+		file >> playerHealthString;
+		file >> playerDirectionFacingString;
+
+		//Convert string Player attributes to int values
+		int playerXCoorInt = atoi(playerXCoorString.c_str());
+		int playerYCoorInt = atoi(playerYCoorString.c_str());
+		int playerHealthInt = atoi(playerHealthString.c_str());
+		int playerDirectionFacingInt = atoi(playerDirectionFacingString.c_str());
+
+		//Set Player game attributes
+		level.m_Player.setGameCoordinates(sf::Vector2i{ playerXCoorInt, playerYCoorInt });
+		level.m_Player.setHealth(playerHealthInt);
+		level.m_Player.setDirectionFacing(intToEnum(playerDirectionFacingInt));
+
+		//Read in Stair Coordinates
+		file >> stairsXCoorString;
+		file >> stairsYCoorString;
+
+		//Set String Stair Coordinates as Ints
+		int stairsXCoorInt = atoi(stairsXCoorString.c_str());
+		int stairsYCoorInt = atoi(stairsXCoorString.c_str());
+
+		//Set m_staris gameCoordinates
+		level.m_stairs.setGameCoordinates(sf::Vector2i{ stairsXCoorInt, stairsYCoorInt });
+
+		//Read in size of Vector for map
+		file >> tileSizeString;
+
+		//sets tileSizeString to int value
+		int tileSizeInt = atoi(tileSizeString.c_str());
+
+		//Load vector with old map tiles
+		std::vector<int> map(tileSizeInt);
+		for (int i = 0; i<tileSizeInt; i++) {
+			file >> tileTypeString;
+			int tileTypeInt = atoi(tileTypeString.c_str());
+			map[i] = tileTypeInt;
+		}
+
+	}
+
 }
 
 std::vector<GameObject>& Level::getItems()
@@ -467,7 +464,7 @@ void Level::enemy_AI_Movement()
 	for (auto it = m_Enemies.begin(); it != m_Enemies.end(); ++it)
 	{
 		// You don't want zombies to always turn right when they hit a wall right?
-		bool counterClockwiseRotation = (bool) rand() % 2;
+		bool counterClockwiseRotation = (bool)rand() % 2;
 
 		int direction = rand() % 5; // direction ranges from [0,5) with 0 as right, 3 as down and 4 as rest one turn
 
@@ -475,13 +472,13 @@ void Level::enemy_AI_Movement()
 
 		for (int directionLoop = 0; directionLoop < 4; ++directionLoop)
 		{
-			if (direction == 0 && ifCanThenMove(*it, DIRECTION::RIGHT))
+			if (direction == 0 && ifCanThenMove_Actor(*it, DIRECTION::RIGHT))
 				break;
-			if (direction == 1 && ifCanThenMove(*it, DIRECTION::UP))
+			if (direction == 1 && ifCanThenMove_Actor(*it, DIRECTION::UP))
 				break;
-			if (direction == 2 && ifCanThenMove(*it, DIRECTION::LEFT))
+			if (direction == 2 && ifCanThenMove_Actor(*it, DIRECTION::LEFT))
 				break;
-			if (direction == 3 && ifCanThenMove(*it, DIRECTION::DOWN))
+			if (direction == 3 && ifCanThenMove_Actor(*it, DIRECTION::DOWN))
 				break;
 
 			if (counterClockwiseRotation)
@@ -504,6 +501,7 @@ void Level::enemy_AI_Movement()
 
 bool Level::canMove_Enemy(int index, DIRECTION dir)
 {
+	m_Enemies[index].setDirectionFacing(dir);
 	return canMove(m_Enemies[index], dir);
 }
 
@@ -604,12 +602,19 @@ void Level::move(GameObject& obj, DIRECTION dir)
 
 bool Level::ifCanThenMove_Enemy(int index, DIRECTION dir)
 {
+	m_Enemies[index].setDirectionFacing(dir);
 	return ifCanThenMove(m_Enemies[index], dir);
 }
 
 bool Level::ifCanThenMove_Player(DIRECTION dir)
 {
 	return ifCanThenMove(m_Player, dir);
+}
+
+bool Level::ifCanThenMove_Actor(ActorObject& obj, DIRECTION dir)
+{
+	obj.setDirectionFacing(dir);
+	return ifCanThenMove(obj, dir);
 }
 
 bool Level::ifCanThenMove(GameObject& obj, DIRECTION dir)
@@ -717,7 +722,7 @@ void Level::draw(sf::RenderTarget &target, sf::RenderStates states) const
 std::string Level::toString()
 {
 	std::stringstream sStream;
-	
+
 	sStream << m_Items.size() << '\n';
 
 	if (m_Items.size() != 0)
@@ -747,7 +752,7 @@ std::string Level::toString()
 	sStream << m_stairs.toString() << '\n';
 
 	sStream << m_map.toString() << '\n';
-	
+
 	sStream << m_sizeOfTileMap.x << ' ' << m_sizeOfTileMap.y << '\n';
 
 	return sStream.str();
