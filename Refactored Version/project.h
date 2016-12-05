@@ -44,8 +44,6 @@ private:
 // Needs to correspond to the order put into the array for different direction sprites
 enum class DIRECTION { RIGHT, UP, LEFT, DOWN };
 
-
-
 class TileMap : public sf::Drawable, public sf::Transformable
 {
 public:
@@ -70,6 +68,8 @@ public:
 
 	virtual void setGameCoordinates(sf::Vector2i);
 	virtual void setObject(sf::Sprite&);
+	void setSpritePosition(float x, float y);
+	void setSpritePosition(const sf::Vector2f&);
 
 	virtual std::string toString();
 	virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const;
@@ -78,14 +78,7 @@ private:
 	sf::Sprite m_obj; // Error if unique
 };
 
-class EnemyObject : public GameObject, public Actor
-{
-public:
-	std::string toString();
-	//TODO nothing?
-};
-
-class PlayerObject : public GameObject, public Actor
+class ActorObject : public GameObject, public Actor
 {
 public:
 	DIRECTION getDirectionFacing();
@@ -93,12 +86,14 @@ public:
 	std::vector<sf::IntRect>& getRects();
 	void setDirectionFacing(DIRECTION);
 
+	void setSpritePosition(float x, float y);
+	void setSpritePosition(const sf::Vector2f&);
+
 	std::string toString();
 	virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const;
 private:
-	std::vector<sf::IntRect> m_rects; // list of rectangular vertices of sprites in texture
+	std::vector<sf::IntRect> m_rects; // list of rectangular vertices of sprites in texture in DIRECTION order
 	DIRECTION m_directionFacing;
-	// Needs to have a texture to read correct sprite image from
 };
 
 
@@ -106,19 +101,17 @@ class Level : public sf::Drawable, public sf::Transformable
 {
 public:
 	bool load(const std::string& tileset, sf::Vector2u tileSize, std::vector<int> tiles, unsigned int width, unsigned int height);
-    static void saveGame(Level level);
-    static void loadGame(Level level);
 
 	std::vector<GameObject>& getItems();
-	std::vector<EnemyObject>& getEnemies();
+	std::vector<ActorObject>& getEnemies();
 	GameObject& getStairs();
-	PlayerObject& getPlayer();
+	ActorObject& getPlayer();
 	int getTileNum(int x, int y);
 	bool tileIsWalkable(sf::Vector2i);
 	bool tileIsWalkable(int x, int y);
 	void addItem(GameObject&);
-	void addEnemy(EnemyObject&);
-	void setPlayer(PlayerObject&);
+	void addEnemy(ActorObject&);
+	void setPlayer(ActorObject&);
 	void setStairs(GameObject&);
 	void enemy_AI_Movement();
 	bool canMove_Enemy(int index, DIRECTION);
@@ -145,8 +138,8 @@ public:
 
 private:
 	std::vector<GameObject> m_Items;
-	std::vector<EnemyObject> m_Enemies;
-	PlayerObject m_Player;
+	std::vector<ActorObject> m_Enemies;
+	ActorObject m_Player;
 	GameObject m_stairs;
 	TileMap m_map;
 	sf::Vector2u m_tileSize;

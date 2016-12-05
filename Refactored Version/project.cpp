@@ -1,6 +1,4 @@
 #include "project.h"
-#include <iostream>
-#include <fstream>
 
 Actor::Actor() {	
 	health_=10;
@@ -227,6 +225,16 @@ void GameObject::setObject(sf::Sprite& obj)
 	return;
 }
 
+void GameObject::setSpritePosition(float x, float y)
+{
+	m_obj.setPosition(x, y);
+}
+
+void GameObject::setSpritePosition(const sf::Vector2f& position)
+{
+	m_obj.setPosition(position);
+}
+
 std::string GameObject::toString()
 {
 	return std::to_string(getGameCoordinates().x) + ' ' + std::to_string(getGameCoordinates().y);
@@ -238,19 +246,19 @@ void GameObject::draw(sf::RenderTarget &target, sf::RenderStates states) const
 	return;
 }
 
-void PlayerObject::draw(sf::RenderTarget &target, sf::RenderStates states) const
+void ActorObject::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
 	GameObject::draw(target, states);
 
 	// TODO Draw different sprites here
 }
 
-DIRECTION PlayerObject::getDirectionFacing()
+DIRECTION ActorObject::getDirectionFacing()
 {
 	return m_directionFacing;
 }
 
-void PlayerObject::setDirectionFacing(DIRECTION dir)
+void ActorObject::setDirectionFacing(DIRECTION dir)
 {
 	if (m_rects.size() > (int) dir && getObject().getTextureRect() != m_rects[(int)dir])
 	{
@@ -261,17 +269,22 @@ void PlayerObject::setDirectionFacing(DIRECTION dir)
 	m_directionFacing = dir;
 }
 
-std::string EnemyObject::toString()
+void ActorObject::setSpritePosition(float x, float y)
 {
-	return std::to_string(getGameCoordinates().x) + ' ' + std::to_string(getGameCoordinates().y) + ' ' + std::to_string(getHealth());
+	getObject().setPosition(x, y);
 }
 
-std::string PlayerObject::toString()
+void ActorObject::setSpritePosition(const sf::Vector2f& position)
+{
+	getObject().setPosition(position);
+}
+
+std::string ActorObject::toString()
 {
 	return std::to_string(getGameCoordinates().x) + ' ' + std::to_string(getGameCoordinates().y) + ' ' + std::to_string(getHealth()) + ' ' + std::to_string((int) getDirectionFacing());
 }
 
-std::vector<sf::IntRect>& PlayerObject::getRects()
+std::vector<sf::IntRect>& ActorObject::getRects()
 {
 	return m_rects;
 }
@@ -290,108 +303,12 @@ bool Level::load(const std::string& tileset, sf::Vector2u tileSize, std::vector<
 	return false;
 }
 
-void Level::saveGame(Level level){
-    std::ofstream file("save.txt");
-    file << level.toString() << std::endl;
-}
-
-void Level::loadGame(Level level){
-
-    //Create all needed variables
-    std::string itemSizeString;
-    std::string placeHolder;
-    std::string enemySizeString;
-    std::string enemyXCoorString;
-    std::string enemyYCoorString;
-    std::string enemyHealthString;
-    std::string playerXCoorString;
-    std::string playerYCoorString;
-    std::string playerHealthString;
-    std::string playerDirectionFacingString;
-    std::string stairsXCoorString;
-    std::string stairsYCoorString;
-    std::string tileSizeString;
-    std::string tileTypeString;
-    
-    std::ifstream file;
-    file.open("save.txt");
-    if (file.is_open()) {
-        file >> itemSizeString;
-        int itemSizeInt = atoi(itemSizeString.c_str());
-        
-        //read in enemy values
-        file >> enemySizeString;
-        file >> enemyXCoorString;
-        file >> enemyYCoorString;
-        file >> enemyHealthString;
-        
-        //Convert string enemy attributes to int values
-        int enemySizeInt = atoi(enemySizeString.c_str());
-        int enemyXCoorInt = atoi(enemyXCoorString.c_str());
-        int enemyYCoorInt = atoi(enemyYCoorString.c_str());
-        int enemyHealthInt = atoi(enemyHealthString.c_str());
-        
-        //Create enemies and fill m_Enemies
-        EnemyObject zombie;
-        zombie.setGameCoordinates(sf::Vector2i{ enemyXCoorInt, enemyYCoorInt });
-        zombie.setHealth(enemyHealthInt);
-        level.m_Enemies.resize(enemySizeInt);
-        for (int i=0; i<level.m_Enemies.size(); i++){
-            level.m_Enemies[i] = zombie;
-        }
-        
-        //read in Player values
-        file >> playerXCoorString;
-        file >> playerYCoorString;
-        file >> playerHealthString;
-        file >> playerDirectionFacingString;
-        
-        //Convert string Player attributes to int values
-        int playerXCoorInt = atoi(playerXCoorString.c_str());
-        int playerYCoorInt = atoi(playerYCoorString.c_str());
-        int playerHealthInt = atoi(playerHealthString.c_str());
-        int playerDirectionFacingInt = atoi(playerDirectionFacingString.c_str());
-        
-        //Set Player game attributes
-        level.m_Player.setGameCoordinates(sf::Vector2i{ playerXCoorInt, playerYCoorInt});
-        level.m_Player.setHealth(playerHealthInt);
-        level.m_Player.setDirectionFacing(intToEnum(playerDirectionFacingInt));
-                
-        //Read in Stair Coordinates
-        file >> stairsXCoorString;
-        file >> stairsYCoorString;
-        
-        //Set String Stair Coordinates as Ints
-        int stairsXCoorInt = atoi(stairsXCoorString.c_str());
-        int stairsYCoorInt = atoi(stairsXCoorString.c_str());
-
-        //Set m_staris gameCoordinates
-        level.m_stairs.setGameCoordinates(sf::Vector2i{stairsXCoorInt, stairsYCoorInt});
-        
-        //Read in size of Vector for map
-        file >> tileSizeString;
-        
-        //sets tileSizeString to int value
-        int tileSizeInt = atoi(tileSizeString.c_str());
-        
-        //Load vector with old map tiles
-        std::vector<int> map(tileSizeInt);
-        for(int i=0; i<tileSizeInt; i++){
-            file >> tileTypeString;
-            int tileTypeInt = atoi(tileTypeString.c_str());
-            map[i]=tileTypeInt;
-        }
-        
-    }
-    
-}
-
 std::vector<GameObject>& Level::getItems()
 {
 	return m_Items;
 }
 
-std::vector<EnemyObject>& Level::getEnemies()
+std::vector<ActorObject>& Level::getEnemies()
 {
 	return m_Enemies;
 }
@@ -401,7 +318,7 @@ GameObject& Level::getStairs()
 	return m_stairs;
 }
 
-PlayerObject& Level::getPlayer()
+ActorObject& Level::getPlayer()
 {
 	return m_Player;
 }
@@ -427,12 +344,12 @@ void Level::addItem(GameObject& obj)
 	m_Items.push_back(obj);
 }
 
-void Level::addEnemy(EnemyObject& obj)
+void Level::addEnemy(ActorObject& obj)
 {
 	m_Enemies.push_back(obj);
 }
 
-void Level::setPlayer(PlayerObject& obj)
+void Level::setPlayer(ActorObject& obj)
 {
 	m_Player = obj;
 }

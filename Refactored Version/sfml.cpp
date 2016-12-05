@@ -5,43 +5,6 @@ std::string playerStat(std::stringstream & s, Actor & a) {
 	return s.str();
 }
 
-//std::vector<int> levelGen() {//generates a random map for 16 by 8 maps
-//	std::vector<int> level(128);
-//	int sum = 0;
-//	while (sum<140) {
-//		sum = 0;
-//		for (int i = 1; i<128; i++) {
-//			level[i] = (rand() % 3);
-//		}
-//		for (int i = 0; i<128; i++) {
-//			sum += level[i];
-//		}
-//	}
-//	level[0] = 1;
-//	level[1] = 1;
-//	level[2] = 1;
-//	level[17] = 1;
-//	return level;
-//}
-//
-//void mapInit(Level map, std::vector<int> level) {//loads a new map	
-//	
-//	if (!map.load("tilese_cave.png", sf::Vector2u(32, 32), level, 16, 8)) {
-//		std::cout << "Unable to load tilese_cave.png" << std::endl;
-//		return;
-//	}
-//	// HI
-//	map.randPos(map.getPlayer());
-//	for (auto it = map.getEnemies().begin(); it != map.getEnemies().end(); ++it)
-//	{
-//		map.randPos(*it);
-//	}
-//}
-
-
-/**********************************************************************************************/
-
-
 //Important note, to make everything much easier, 
 //we should store all of the entities into a vector 
 //and then pass into the transform functions to 
@@ -99,10 +62,6 @@ int main()
 		return EXIT_FAILURE;
 	}
 
-//	texture.loadFromFile("player.png");  // TODO no need to repeat it :/
-
-	//TODO TODONOW NOW
-
 	sf::IntRect walkingRight(0, 64, 32, 32);
 	sf::IntRect walkingUp(0, 96, 32, 32);
 	sf::IntRect walkingLeft(0, 32, 32, 32);
@@ -110,14 +69,13 @@ int main()
 
 	sprite.setTextureRect(walkingDown);
 	sprite.setTexture(texture);
-	//sprite.setPosition(0, 0);//sprite.setPosition(448,64);
+	sf::Vector2i spriteGameCoordinates{ 14, 2 };
+	sprite.setPosition(448,64);
 	sprite.setScale(1, 1);
 
-	sf::Vector2i spriteGameCoordinates{ 0, 0 };
-	PlayerObject user;
+	ActorObject user;
 	user.setObject(sprite);
 	user.setDirectionFacing(DIRECTION::DOWN);
-	//user.setDirectionFacing(DIRECTION::DOWN); // Cuz first sprite is walking down
 	user.setGameCoordinates(spriteGameCoordinates);
 
 	// Important put them in the same order as the enum DIRECTION
@@ -128,16 +86,28 @@ int main()
 
 	map.setPlayer(user);
 
-	/********************************/
-
-	sf::Sprite zombie;
-	sf::Texture zombieTexture;
-	if (!zombieTexture.loadFromFile("zombie.png")) {
-		std::cout << "Unable to load zombie.png" << std::endl;
-		return EXIT_FAILURE;
+	sf::Sprite knight;
+	sf::Texture knightTexture;
+	if (!knightTexture.loadFromFile("knight.png")) {
+		return -1;
 	}
-	zombie.setTexture(zombieTexture);
-	zombie.setPosition(32, 32);
+
+	knight.setTexture(knightTexture);
+	knight.setTextureRect(walkingDown);
+	knight.setPosition(32.0f, 32.0f);
+
+	ActorObject knightObj;
+	knightObj.setDirectionFacing(DIRECTION::DOWN);
+	knightObj.setGameCoordinates(sf::Vector2i{1, 1});
+	knightObj.setObject(knight);
+
+
+	knightObj.getRects().push_back(walkingRight);
+	knightObj.getRects().push_back(walkingUp);
+	knightObj.getRects().push_back(walkingLeft);
+	knightObj.getRects().push_back(walkingDown);
+
+	map.addEnemy(knightObj);
 
 	sf::Sprite stairs;
 	stairs.setPosition(32, 32);
@@ -159,12 +129,6 @@ int main()
 	mist.setTexture(mistTexture);
 	mist.setScale(2, 2);
 	mist.setPosition(0, -32);
-
-	/**********************************/
-	EnemyObject enemyObj_zombie;
-	enemyObj_zombie.setObject(zombie);
-	enemyObj_zombie.setGameCoordinates(sf::Vector2i{ 1, 1 });
-	map.addEnemy(enemyObj_zombie);
 
 	GameObject gameObj_stairs;
 	gameObj_stairs.setObject(stairs);
@@ -259,11 +223,11 @@ int main()
 
 		window.draw(map);
 		window.draw(rectangle);
+		window.draw(mist);
 		//	window.draw(zombie);
 		//	window.draw(sprite);
         window.draw(health);
 		window.display();
-        
 		//stuff needs to be drawn in the right order.
 		//VERY IMPORTANT: collision detection is done after drawing
 		//	if it's done before the bounds are not defined
