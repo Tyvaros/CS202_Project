@@ -135,6 +135,12 @@ public:
 	void setTileMap(TileMap&);
 	sf::Vector2u getTileSize();
 	//void Level::randPos(GameObject& obj);
+	void randPos(ActorObject&);
+	void levelGen();
+	void moveToCoordinates(GameObject& obj, sf::Vector2i coordinates);
+	void moveToCoordinates(GameObject& obj, int x, int y);
+
+
 	std::string toString();
 
 	virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const;

@@ -697,6 +697,70 @@ sf::Vector2u Level::getTileSize()
 	return m_tileSize;
 }
 
+void Level::levelGen()
+{
+	std::vector<int> level(128);
+	int sum = 0;
+	while (sum<140) {
+		sum = 0;
+		for (int i = 1; i<128; i++) {
+			level[i] = (rand() % 3);
+		}
+		for (int i = 0; i<128; i++) {
+			sum += level[i];
+		}
+	}
+	level[0] = 1;
+	level[1] = 1;
+	level[2] = 1;
+	level[17] = 1;
+
+	TileMap newMap;
+	newMap.load("tilese_cave.png", sf::Vector2u{ 32, 32 }, level, 16, 8);
+	m_map = newMap;
+
+	// TODO player and enemy rand pos
+	randPos(m_Player);
+
+	for (auto it = m_Enemies.begin(); it != m_Enemies.end(); ++it)
+	{
+		do
+		{
+			randPos(*it);
+		} while (m_Player.getGameCoordinates() == it->getGameCoordinates());
+	}
+}
+
+
+
+void Level::randPos(ActorObject & obj)
+{
+	int xCoor;
+	int yCoor;
+	
+	while (true) {//This prevents the new position to be on an impassible space	
+		xCoor = rand() % m_sizeOfTileMap.x;
+		yCoor = rand() % m_sizeOfTileMap.y;
+	
+		if (m_map.getTiles()[xCoor + yCoor * m_sizeOfTileMap.x] != 0)
+		{
+			moveToCoordinates(obj, sf::Vector2i{xCoor, yCoor});
+			return;
+		}
+	}
+}
+
+void Level::moveToCoordinates(GameObject& obj, sf::Vector2i coordinates)
+{
+	obj.setGameCoordinates(coordinates);
+	obj.getObject().setPosition(coordinates.x*m_tileSize.x, coordinates.y*m_tileSize.y);
+}
+
+void Level::moveToCoordinates(GameObject& obj,int x, int y)
+{
+	moveToCoordinates(obj, sf::Vector2i{ x, y });
+}
+
 void Level::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
 	states.transform = getTransform();

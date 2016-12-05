@@ -201,6 +201,7 @@ int main()
 					}
 					if (event.key.code == sf::Keyboard::P)
 					{
+						map.levelGen();
 						std::cout << map.toString();
 						break;
 					}
@@ -250,14 +251,11 @@ int main()
 			std::cout << "1 damage" << std::endl;
 		}
 
-		//if (map.isPlayerWhereDoorIs())
-		//{
-		//	/*level = levelGen();
-		//	mapInit(map, level);*/
-		//	std::cout << "changed map" << std::endl;
-		//	//map.randPos(map.getPlayer());
-		//	map.moveToCoordinates(map.getPlayer(), sf::Vector2i{ 3, 0 });
-		//}
+		if (map.isPlayerWhereDoorIs())
+		{
+			std::cout << "changed map" << std::endl;
+			map.levelGen();
+		}
 
 		if (map.getPlayer().getHealth() <= 0) {
 			std::cout << "You died" << std::endl;
