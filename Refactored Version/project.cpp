@@ -320,6 +320,7 @@ void Level::loadGame(Level level) {
 	std::string enemyXCoorString;
 	std::string enemyYCoorString;
 	std::string enemyHealthString;
+    std::string enemyDirectionFacingString;
 	std::string playerXCoorString;
 	std::string playerYCoorString;
 	std::string playerHealthString;
@@ -330,6 +331,7 @@ void Level::loadGame(Level level) {
 	std::string tileTypeString;
 
 	std::ifstream file;
+    std::ofstream output("text.txt");
 	file.open("save.txt");
 	if (file.is_open()) {
 		file >> itemSizeString;
@@ -340,18 +342,22 @@ void Level::loadGame(Level level) {
 		file >> enemyXCoorString;
 		file >> enemyYCoorString;
 		file >> enemyHealthString;
+        file >> enemyDirectionFacingString;
+        
 
 		//Convert string enemy attributes to int values
 		int enemySizeInt = atoi(enemySizeString.c_str());
 		int enemyXCoorInt = atoi(enemyXCoorString.c_str());
 		int enemyYCoorInt = atoi(enemyYCoorString.c_str());
 		int enemyHealthInt = atoi(enemyHealthString.c_str());
+        int enemyDirectionFacingInt = atoi(enemyDirectionFacingString.c_str());
 
 		//Create enemies and fill m_Enemies
 		ActorObject enemy;
 		enemy.setGameCoordinates(sf::Vector2i{ enemyXCoorInt, enemyYCoorInt });
 		enemy.setHealth(enemyHealthInt);
 		level.m_Enemies.resize(enemySizeInt);
+        enemy.setDirectionFacing(intToEnum(enemyDirectionFacingInt));
 		for (int i = 0; i<level.m_Enemies.size(); i++) {
 			level.m_Enemies[i] = enemy;
 		}
@@ -380,7 +386,7 @@ void Level::loadGame(Level level) {
 		//Set String Stair Coordinates as Ints
 		int stairsXCoorInt = atoi(stairsXCoorString.c_str());
 		int stairsYCoorInt = atoi(stairsXCoorString.c_str());
-
+        
 		//Set m_staris gameCoordinates
 		level.m_stairs.setGameCoordinates(sf::Vector2i{ stairsXCoorInt, stairsYCoorInt });
 
@@ -391,11 +397,11 @@ void Level::loadGame(Level level) {
 		int tileSizeInt = atoi(tileSizeString.c_str());
 
 		//Load vector with old map tiles
-		std::vector<int> map(tileSizeInt);
+		std::vector<int> savedMap(tileSizeInt);
 		for (int i = 0; i<tileSizeInt; i++) {
 			file >> tileTypeString;
 			int tileTypeInt = atoi(tileTypeString.c_str());
-			map[i] = tileTypeInt;
+			savedMap[i] = tileTypeInt;
 		}
 
 	}
