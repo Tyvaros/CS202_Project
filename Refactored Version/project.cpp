@@ -148,7 +148,6 @@ const std::string enumToFileString(TILESETFILE tile) {
 	}
 }
 
-
 bool TileMap::load(const std::string& tileset, sf::Vector2u tileSize, std::vector<int> tiles, unsigned int width, unsigned int height)
 {
 	// load the tileset texture
@@ -325,11 +324,27 @@ bool Level::load(const std::string& tileset, sf::Vector2u tileSize, std::vector<
 		m_tileSize.y = tileSize.y;
 		m_sizeOfTileMap.x = width;
 		m_sizeOfTileMap.y = height;
+		m_tileSetFile = fileStringToEnum(tileset);
 		return true;
 	}
 
 	std::cout << "Failed to load" << std::endl;
 	return false;
+}
+
+TILESETFILE fileStringToEnum(const std::string str)
+{
+	if (str.compare(enumToFileString(TILESETFILE::FOREST)) == 0)
+	{
+		return TILESETFILE::FOREST;
+	}
+	else if (str.compare(enumToFileString(TILESETFILE::CAVE)) == 0)
+	{
+		return TILESETFILE::CAVE;
+	}
+	else
+		std::cout << "Unable to covert string " << str << " to TILESETFILE" << std::endl;
+		return (TILESETFILE) 0;
 }
 
 void Level::saveGame(Level& level) {
@@ -359,6 +374,7 @@ void Level::loadGame(Level& level) {
 	std::string tileTypeString;
 	std::string levelWidthString;
 	std::string levelHeightString;
+	std::string tileSetFileString;
 
 	std::ifstream file;
 	file.open("save.txt");
@@ -367,6 +383,7 @@ void Level::loadGame(Level& level) {
 		file >> itemSizeString;
 		int itemSizeInt = atoi(itemSizeString.c_str());
 
+		//resize item vector
 		level.m_Items.resize(itemSizeInt);
 
 		for (int i = 0; i < itemSizeInt; ++i)
@@ -389,13 +406,12 @@ void Level::loadGame(Level& level) {
 		int enemySizeInt = atoi(enemySizeString.c_str());
 
 		//resize enemy vector
-        level.m_Enemies.resize(enemySizeInt);
+		level.m_Enemies.resize(enemySizeInt);
 
 		for (int i = 0; i < enemySizeInt; ++i)
 		{
-			
-            //read in enemy attributes as strings
-            file >> tempEnemyXCoorString;
+			//read in enemy attributes as strings
+			file >> tempEnemyXCoorString;
 			file >> tempEnemyYCoorString;
 			file >> tempEnemyHealthString;
 			file >> tempEnemyDirectionFacingString;
@@ -406,14 +422,14 @@ void Level::loadGame(Level& level) {
 			int tempEnemyHealthInt = atoi(tempEnemyHealthString.c_str());
 			int tempEnemyDirectionFacingInt = atoi(tempEnemyDirectionFacingString.c_str());
 
-			// Sets game attributes for e_Enemies[i]
+			// Sets game attributes for m_Enemies[i]
 			level.m_Enemies[i].setGameCoordinates(sf::Vector2i{ tempEnemyXCoorInt, tempEnemyYCoorInt });
 			level.m_Enemies[i].setHealth(tempEnemyHealthInt);
 			level.m_Enemies[i].setDirectionFacing(intToEnum(tempEnemyDirectionFacingInt));
 
 			// Actually change the drawing coordinates of the Sprite to match the GameCoordinates
 			level.m_Enemies[i].getObject().setPosition(sf::Vector2f{ 1.0f * tempEnemyXCoorInt * level.m_tileSize.x , 1.0f * tempEnemyYCoorInt * level.m_tileSize.y });
-        }
+		}
 
 		//read in Player values
 		file >> playerXCoorString;
@@ -470,9 +486,13 @@ void Level::loadGame(Level& level) {
 		int levelWidth = atoi(levelWidthString.c_str());
 		int levelHeight = atoi(levelHeightString.c_str());
 
+		file >> tileSetFileString;
+
+		int tileSetFileInt = atoi(tileSetFileString.c_str());
+
 		TileMap tempTileMap;
-		tempTileMap.load("tileset.png", sf::Vector2u{32, 32}, map, levelWidth, levelHeight);
 		level.getTileMap() = tempTileMap;
+		level.load(enumToFileString((TILESETFILE) tileSetFileInt), sf::Vector2u{32, 32}, map, levelWidth, levelHeight);
 
 		std::cout << "Load:" << std::endl << level.toString() << std::endl;
 	}
@@ -778,8 +798,8 @@ void Level::levelGen()
 	level[17] = 1;
 
 	TileMap newMap;
-	newMap.load("tilese_cave.png", sf::Vector2u{ 32, 32 }, level, 16, 8);
 	m_map = newMap;
+	load(enumToFileString(TILESETFILE::CAVE), sf::Vector2u{ 32, 32 }, level, 16, 8);
 
 	// TODO player and enemy rand pos
 	randPos(m_Player);
@@ -792,8 +812,6 @@ void Level::levelGen()
 		} while (m_Player.getGameCoordinates() == it->getGameCoordinates());
 	}
 }
-
-
 
 void Level::randPos(ActorObject & obj)
 {
@@ -848,6 +866,7 @@ void Level::draw(sf::RenderTarget &target, sf::RenderStates states) const
 std::string Level::toString()
 {
 	std::stringstream sStream;
+
 	sStream << m_Items.size() << '\n';
 
 	if (m_Items.size() != 0)
@@ -859,20 +878,28 @@ std::string Level::toString()
 	}
 
 	sStream << '\n';
+
 	sStream << m_Enemies.size() << '\n';
 
 	if (m_Enemies.size() != 0)
 	{
 		for (auto it = m_Enemies.begin(); it != m_Enemies.end() - 1; ++it)
 			sStream << it->toString() << ' ';
+
 		sStream << m_Enemies.back().toString();
 	}
 
 	sStream << '\n';
+
 	sStream << m_Player.toString() << '\n';
+
 	sStream << m_stairs.toString() << '\n';
+
 	sStream << m_map.toString() << '\n';
+
 	sStream << m_sizeOfTileMap.x << ' ' << m_sizeOfTileMap.y << '\n';
+
+	sStream << (int) m_tileSetFile << '\n';
+
 	return sStream.str();
 }
-

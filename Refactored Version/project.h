@@ -39,11 +39,13 @@ private:
 
 
 /**************************************************************/
+
 class cScreen
 {
-public :
-    virtual int Run (sf::RenderWindow &App) = 0;
+public:
+	virtual int Run(sf::RenderWindow &App) = 0;
 };
+
 // Direction enum
 // Needs to correspond to the order put into the array for different direction sprites
 enum class DIRECTION { RIGHT, UP, LEFT, DOWN };
@@ -157,6 +159,7 @@ private:
 	TileMap m_map;
 	sf::Vector2u m_tileSize;
 	sf::Vector2i m_sizeOfTileMap;
+	TILESETFILE m_tileSetFile;
 };
 
 // Special Operators for directions
@@ -166,7 +169,9 @@ DIRECTION operator++(DIRECTION&, int); // Postfix increment (counterclockwise)
 DIRECTION& operator--(DIRECTION&); // decrement (clockwise)
 DIRECTION operator--(DIRECTION&, int); //Postfix decrement (clockwise)
 DIRECTION intToEnum(int);
-char * enumtoString(TILESETFILE tile); 
+
+const std::string enumToFileString(TILESETFILE);
+TILESETFILE fileStringToEnum(const std::string);
 
 /**************************************************************/
 

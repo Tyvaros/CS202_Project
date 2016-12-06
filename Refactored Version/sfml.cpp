@@ -11,13 +11,9 @@ std::string playerStat(std::stringstream & s, Actor & a) {
 //draw,move,set everything at once
 int main()
 {
-	std::vector<cScreen*> Screens;
 	int screen = 0;
-  
 	srand(time(NULL));
-	
 	sf::RenderWindow window(sf::VideoMode(512, 288), "Project Window");
-	//sf::RenderWindow menu(sf::VideoMode(512, 288), "Project Window");
 
 	sf::RectangleShape rectangle(sf::Vector2f(512, 32));//healthbox
 	rectangle.setPosition(0, 256);
@@ -36,7 +32,7 @@ int main()
 
 	Level map; //TileMap map;
 
-	if (!map.load("tileset.png", sf::Vector2u(32, 32), level, 16, 8)) {
+	if (!map.load(enumToFileString(TILESETFILE::FOREST), sf::Vector2u(32, 32), level, 16, 8)) {
 		std::cout << "Unable to load tileset.png" << std::endl;
 		return EXIT_FAILURE;
 	}
@@ -58,12 +54,11 @@ int main()
 
 	sf::Sprite sprite;
 	sf::Texture texture;
-    
-    sf::Texture endGameTexture;
-    sf::Sprite endGameSprite;
-    endGameTexture.loadFromFile("gameOver.png");
-    endGameSprite.setTexture(endGameTexture);
-    
+
+	sf::Texture endGameTexture;
+	sf::Sprite endGameSprite;
+	endGameTexture.loadFromFile("gameOver.png");
+	endGameSprite.setTexture(endGameTexture);
 
 	texture.setRepeated(false);//load the sprite for the player
 	if (!texture.loadFromFile("player.png")) {
@@ -143,19 +138,24 @@ int main()
 	gameObj_stairs.setObject(stairs);
 	gameObj_stairs.setGameCoordinates(sf::Vector2i{ 1, 1 });
 	map.setStairs(gameObj_stairs);
-	
+
+	// Create and set up the menu
 	sf::Sprite menu;
 	sf::Texture menuTexture;
-	if (!menuTexture.loadFromFile("menu.png")) {
+
+	if (!menuTexture.loadFromFile("menu.png"))
+	{
 		std::cout << "Unable to load menu.png" << std::endl;
 		return EXIT_FAILURE;
 	}
+
 	menu.setTexture(menuTexture);
+
 	//main loop
 	sf::Clock clock;
 	unsigned int millisecondsSleep = 100000;
-	while(window.isOpen()) {
-	while (screen==0)
+	while (window.isOpen())
+	while (screen == 0)
 	{
 		sf::Event event;
 		//event loop
@@ -167,7 +167,7 @@ int main()
 			{
 				case sf::Event::Closed:
 					window.close();
-					break;
+					return EXIT_SUCCESS;
 				case sf::Event::KeyPressed:
 					if (event.key.code == sf::Keyboard::W) {
 						if (!map.canMove_Player(DIRECTION::UP))
@@ -219,10 +219,14 @@ int main()
 					if (event.key.code == sf::Keyboard::P) // Level gen
 					{
 						map.levelGen();
-						std::cout << map.toString();
 						break;
 					}
-					if (event.key.code == sf::Keyboard::L) // Load
+                    if (event.key.code == sf::Keyboard::I) //Print Info
+                    {
+                        std::cout << map.toString();
+                        break;
+                    }
+                    if (event.key.code == sf::Keyboard::L) // Load
 					{
 						std::cout << "Game loaded" << std::endl;
 						Level::loadGame(map);
@@ -234,123 +238,114 @@ int main()
 						Level::saveGame(map);
 						break;
 					}
-					if (event.key.code == sf::Keyboard::LControl)
+					if (event.key.code == sf::Keyboard::LControl) // Attack in direction facing
 					{
-						// TODO player attack in that direction
 						map.playerAttack();
 						std::cout << map.getEnemies()[0].getHealth() << std::endl;
 					}
 					if (event.key.code == sf::Keyboard::Escape)
 					{
-						screen=1;
-						
-					 }
-						
-					map.enemy_AI_Movement();;
-					mist.move(0, .1); // I didn't touch this
+						screen = 1;
+					}
+
+					map.enemy_AI_Movement();
+					mist.move(0, .5);
 
 				default:
 					break;
 			}
 		}
-			health.setString(playerStat(s, map.getPlayer()));
-			window.clear();
+	
+		health.setString(playerStat(s, map.getPlayer()));
+		window.clear();
+		
+		// Order for drawing is important (those drawn first are drawn behind those drawn last)
+		window.draw(map);
+		window.draw(rectangle);
+		window.draw(mist);
+        window.draw(health);
+		window.draw(endGameSprite);
+		endGameSprite.setColor(sf::Color(255, 255, 255, 0)); // Sets endGameSprite invisible but atop everything
+		window.display();
 
-			window.draw(map);
-			window.draw(rectangle);
-			window.draw(mist);
-			//	window.draw(zombie);
-			//	window.draw(sprite);
-					window.draw(health);
-					window.draw(endGameSprite);
-					endGameSprite.setColor(sf::Color(255, 255, 255, 0));
-			window.display();
-			//stuff needs to be drawn in the right order.
-			//VERY IMPORTANT: collision detection is done after drawing
-			//	if it's done before the bounds are not defined
-			//  if(boundingBox.intersects(door)) {
-	//		//	level=levelGen();
-			//	map=mapInit(level);
-			//	//mapLoad(map,level);
-			//	std::cout << "changed map" << std::endl;
-			//	sprite.setPosition(448,64); // Game Coordinates are (14,2)
-			//}
+		if (map.isPlayerWhereEnemiesAre())
+		{
+			map.getPlayer().getDirectionFacing();
+			map.ifCanThenMove_Player(lastDirectionFrom);
 
-			if (map.isPlayerWhereEnemiesAre())
+			DIRECTION temp = lastDirectionFrom;
+			map.getPlayer().setDirectionFacing(-temp); // opposite of lastDirectionFrom so torwards enemy
+			map.getPlayer().damage(1);
+			std::cout << "1 damage" << std::endl;
+		}
+
+		if (map.isPlayerWhereDoorIs())
+		{
+			std::cout << "changed map" << std::endl;
+			map.levelGen();
+		}
+
+		// Iterate through the list of enemies
+		// If they are dead move them to (-1, -1) and refill their health
+		for (auto it = map.getEnemies().begin(); it != map.getEnemies().end(); ++it)
+		{
+			if (it->getHealth() == 0)
 			{
-				map.getPlayer().getDirectionFacing();
-				map.ifCanThenMove_Player(lastDirectionFrom);
-
-				DIRECTION temp = lastDirectionFrom;
-				map.getPlayer().setDirectionFacing(-temp); // opposite of lastDirectionFrom so torwards enemy
-				map.getPlayer().damage(1);
-				std::cout << "1 damage" << std::endl;
+				int health = 10;
+				map.moveToCoordinates(*it, sf::Vector2i{ -1, -1 });
+				it->setHealth(health);
 			}
+		}
 
-			if (map.isPlayerWhereDoorIs())
-			{
-				std::cout << "changed map" << std::endl;
-				map.levelGen();
-			}
+		// There are some bugs with this (like player still being able to move)
+		if (map.getPlayer().getHealth() <= 0) {
+			endGameSprite.setColor(sf::Color(255, 255, 255, 255));
+		}
 
-            for (int i=0; i<map.getEnemies().size(); i++) {
-                if (map.getEnemies()[0].getHealth() == 0){
-                    int health = 10;
-                    map.moveToCoordinates(map.getEnemies()[0], sf::Vector2i{ -1, -1 });
-                    map.getEnemies()[0].setHealth(health);
-                }
-            }
-        
-        
-			if (map.getPlayer().getHealth() <= 0) {
-							endGameSprite.setColor(sf::Color(255, 255, 255, 255));
-	//            return 0;
-			}
-
-			s.str(""); //clear the health string
-			while(screen==1) {
-				sf::Event event2;
-				while (window.pollEvent(event2)) {
-					switch (event2.type) {
-						case sf::Event::Closed:
-							window.close();
-								break;
-						case sf::Event::KeyPressed:
-							if (event2.key.code == sf::Keyboard::Escape){
-								screen=0;
-								break;
-							}
-						case sf::Event::MouseButtonPressed:
-							sf::Vector2i mouse = sf::Mouse::getPosition(window);
-							if (event2.mouseButton.button == sf::Mouse::Left && mouse.y<83) {
-							 std::cout << "Game saved." << std::endl;
-							 screen=0;
-							 Level::saveGame(map);
-							 break;
-							}
-							if (event2.mouseButton.button == sf::Mouse::Left  && ((135>mouse.y)&& (mouse.y>95))) {
-							 std::cout << "Game loaded." << std::endl;
-							 screen=0;
-							 Level::loadGame(map);
-							 break;
-							}
-							if (event2.mouseButton.button == sf::Mouse::Left  && ((190>mouse.y)&& (mouse.y>150))) {
-							 screen=0;
-							 break;
-							}
-							if (event2.mouseButton.button == sf::Mouse::Left && mouse.y>200) {
-							 window.close();
-							 break;
-							}
-						}
+		s.str(""); //clear the health string
+		while (screen == 1) {
+			sf::Event event2;
+			while (window.pollEvent(event2)) {
+				switch (event2.type) {
+				case sf::Event::Closed:
+					window.close();
+					break;
+				case sf::Event::KeyPressed:
+					if (event2.key.code == sf::Keyboard::Escape) {
+						screen = 0;
+						break;
 					}
-				
-				window.clear();
-				window.draw(menu);
-				window.display();
+				case sf::Event::MouseButtonPressed:
+					sf::Vector2i mouse = sf::Mouse::getPosition(window);
+					if (event2.mouseButton.button == sf::Mouse::Left && mouse.y<83) {
+						std::cout << "Game saved." << std::endl;
+						screen = 0;
+						Level::saveGame(map);
+						break;
+					}
+					if (event2.mouseButton.button == sf::Mouse::Left && ((135>mouse.y) && (mouse.y>95))) {
+						std::cout << "Game loaded." << std::endl;
+						screen = 0;
+						Level::loadGame(map);
+						break;
+					}
+					if (event2.mouseButton.button == sf::Mouse::Left && ((190>mouse.y) && (mouse.y>150))) {
+						screen = 0;
+						break;
+					}
+					if (event2.mouseButton.button == sf::Mouse::Left && mouse.y>200) {
+						screen = -1;
+						window.close();
+						return EXIT_SUCCESS;
+					}
+				}
 			}
-						
+
+			window.clear();
+			window.draw(menu);
+			window.display();
 		}
 	}
+
 	return 0;
 }
