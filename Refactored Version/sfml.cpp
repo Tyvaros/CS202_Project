@@ -251,8 +251,8 @@ int main()
 		window.draw(rectangle);
 		window.draw(mist);
         window.draw(health);
-		window.draw(endGameSprite);
-		endGameSprite.setColor(sf::Color(255, 255, 255, 0)); // Sets endGameSprite invisible but atop everything
+        endGameSprite.setColor(sf::Color(255, 255, 255, 0)); // Sets endGameSprite invisible but atop everything
+        window.draw(endGameSprite);
 		window.display();
 
 		if (map.isPlayerWhereEnemiesAre())
@@ -271,8 +271,13 @@ int main()
 			std::cout << "changed map" << std::endl;
 			map.levelGen();
 		}
+        
+        if(map.getEnemies()[0].getHealth() == 0){
+            int health = 10;
+            map.moveToCoordinates(map.getEnemies()[0], sf::Vector2i{-1,-1});
+            map.getEnemies()[0].setHealth(health);
+        }
 
-		// There are some bugs with this (like player still being able to move)
 		if (map.getPlayer().getHealth() <= 0) {
 			endGameSprite.setColor(sf::Color(255, 255, 255, 255));
 		}
