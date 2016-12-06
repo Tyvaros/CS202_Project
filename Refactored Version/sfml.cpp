@@ -331,7 +331,7 @@ int main()
 							if (event2.mouseButton.button == sf::Mouse::Left  && ((135>mouse.y)&& (mouse.y>95))) {
 							 std::cout << "Game loaded." << std::endl;
 							 screen=0;
-							 //Level::loadGame(map);
+							 Level::loadGame(map);
 							 break;
 							}
 							if (event2.mouseButton.button == sf::Mouse::Left  && ((190>mouse.y)&& (mouse.y>150))) {
