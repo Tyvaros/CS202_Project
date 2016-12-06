@@ -121,6 +121,20 @@ DIRECTION intToEnum(int ii)
 	return static_cast<DIRECTION>(ii);
 }
 
+char * enumToString(TILESETFILE tile){
+    switch (tile) {
+        case TILESETFILE::FOREST:
+            return "tileset.png";
+
+        case TILESETFILE::CAVE:
+            return "tilese_cave.png";
+
+        default:
+            return "";
+    }
+}
+
+
 bool TileMap::load(const std::string& tileset, sf::Vector2u tileSize, std::vector<int> tiles, unsigned int width, unsigned int height)
 {
 	// load the tileset texture

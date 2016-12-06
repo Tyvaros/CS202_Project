@@ -208,10 +208,14 @@ int main()
 					if (event.key.code == sf::Keyboard::P) // Level gen
 					{
 						map.levelGen();
-						std::cout << map.toString();
 						break;
 					}
-					if (event.key.code == sf::Keyboard::L) // Load
+                    if (event.key.code == sf::Keyboard::I) //Print Info
+                    {
+                        std::cout << map.toString();
+                        break;
+                    }
+                    if (event.key.code == sf::Keyboard::L) // Load
 					{
 						std::cout << "Game loaded" << std::endl;
 						Level::loadGame(map);
@@ -271,6 +275,14 @@ int main()
 			map.getPlayer().damage(1);
 			std::cout << "1 damage" << std::endl;
 		}
+        
+        for (int i=0; i<map.getEnemies().size(); i++) {
+            if (map.getEnemies()[i].getHealth() == 0) {
+                int health = 10;
+                map.moveToCoordinates(map.getEnemies()[i], sf::Vector2i{-1,-1});
+                map.getEnemies()[i].setHealth(health);
+            }
+        }
 
 		if (map.isPlayerWhereDoorIs())
 		{
