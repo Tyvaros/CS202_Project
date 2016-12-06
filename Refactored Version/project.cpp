@@ -388,11 +388,14 @@ void Level::loadGame(Level& level) {
 		file >> enemySizeString;
 		int enemySizeInt = atoi(enemySizeString.c_str());
 
-		level.m_Enemies.resize(enemySizeInt);
+		//resize enemy vector
+        level.m_Enemies.resize(enemySizeInt);
 
 		for (int i = 0; i < enemySizeInt; ++i)
 		{
-			file >> tempEnemyXCoorString;
+			
+            //read in enemy attributes as strings
+            file >> tempEnemyXCoorString;
 			file >> tempEnemyYCoorString;
 			file >> tempEnemyHealthString;
 			file >> tempEnemyDirectionFacingString;
@@ -403,14 +406,14 @@ void Level::loadGame(Level& level) {
 			int tempEnemyHealthInt = atoi(tempEnemyHealthString.c_str());
 			int tempEnemyDirectionFacingInt = atoi(tempEnemyDirectionFacingString.c_str());
 
-			// TODO function that sets Sprite (Sprite can't be instantiated here and passed to enemies)
+			// Sets game attributes for e_Enemies[i]
 			level.m_Enemies[i].setGameCoordinates(sf::Vector2i{ tempEnemyXCoorInt, tempEnemyYCoorInt });
 			level.m_Enemies[i].setHealth(tempEnemyHealthInt);
 			level.m_Enemies[i].setDirectionFacing(intToEnum(tempEnemyDirectionFacingInt));
 
 			// Actually change the drawing coordinates of the Sprite to match the GameCoordinates
 			level.m_Enemies[i].getObject().setPosition(sf::Vector2f{ 1.0f * tempEnemyXCoorInt * level.m_tileSize.x , 1.0f * tempEnemyYCoorInt * level.m_tileSize.y });
-		}
+        }
 
 		//read in Player values
 		file >> playerXCoorString;

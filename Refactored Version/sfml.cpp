@@ -293,6 +293,15 @@ int main()
 				map.levelGen();
 			}
 
+            for (int i=0; i<map.getEnemies().size(); i++) {
+                if (map.getEnemies()[0].getHealth() == 0){
+                    int health = 10;
+                    map.moveToCoordinates(map.getEnemies()[0], sf::Vector2i{ -1, -1 });
+                    map.getEnemies()[0].setHealth(health);
+                }
+            }
+        
+        
 			if (map.getPlayer().getHealth() <= 0) {
 							endGameSprite.setColor(sf::Color(255, 255, 255, 255));
 	//            return 0;
