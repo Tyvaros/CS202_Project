@@ -317,23 +317,23 @@ int main()
 					}
 				case sf::Event::MouseButtonPressed:
 					sf::Vector2i mouse = sf::Mouse::getPosition(window);
-					if (event2.mouseButton.button == sf::Mouse::Left && mouse.y<83) {
+					if (event2.mouseButton.button == sf::Mouse::Left && ((135.5>mouse.y) && (mouse.y>98.5))) {
 						std::cout << "Game saved." << std::endl;
 						screen = 0;
 						Level::saveGame(map);
 						break;
 					}
-					if (event2.mouseButton.button == sf::Mouse::Left && ((135>mouse.y) && (mouse.y>95))) {
+					if (event2.mouseButton.button == sf::Mouse::Left && ((181.5>mouse.y) && (mouse.y>144.5))) {
 						std::cout << "Game loaded." << std::endl;
 						screen = 0;
 						Level::loadGame(map);
 						break;
 					}
-					if (event2.mouseButton.button == sf::Mouse::Left && ((190>mouse.y) && (mouse.y>150))) {
+					if (event2.mouseButton.button == sf::Mouse::Left && ((227.5>mouse.y) && (mouse.y>190.5))) {
 						screen = 0;
 						break;
 					}
-					if (event2.mouseButton.button == sf::Mouse::Left && mouse.y>200) {
+					if (event2.mouseButton.button == sf::Mouse::Left && ((273.5>mouse.y) && (mouse.y>236.5))) {
 						screen = -1;
 						window.close();
 						return EXIT_SUCCESS;
