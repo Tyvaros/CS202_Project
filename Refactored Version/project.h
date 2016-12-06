@@ -39,7 +39,11 @@ private:
 
 
 /**************************************************************/
-
+class cScreen
+{
+public :
+    virtual int Run (sf::RenderWindow &App) = 0;
+};
 // Direction enum
 // Needs to correspond to the order put into the array for different direction sprites
 enum class DIRECTION { RIGHT, UP, LEFT, DOWN };

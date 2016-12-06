@@ -311,31 +311,31 @@ int main()
 								screen=0;
 								break;
 							}
-						if (event.type == sf::Event::MouseButtonPressed){
+						case sf::Event::MouseButtonPressed:
 							sf::Vector2i mouse = sf::Mouse::getPosition(window);
-							if (event.mouseButton.button == sf::Mouse::Left && mouse.y<83) {
+							if (event2.mouseButton.button == sf::Mouse::Left && mouse.y<83) {
 							 std::cout << "Game saved." << std::endl;
 							 screen=0;
 							 Level::saveGame(map);
 							 break;
 							}
-							if (event.mouseButton.button == sf::Mouse::Left  && mouse.y>83) {
+							if (event2.mouseButton.button == sf::Mouse::Left  && ((135>mouse.y)&& (mouse.y>95))) {
 							 std::cout << "Game loaded." << std::endl;
 							 screen=0;
-							 Level::loadGame(map);
+							 //Level::loadGame(map);
 							 break;
 							}
-							if (event.mouseButton.button == sf::Mouse::Left  && mouse.y<83) {
+							if (event2.mouseButton.button == sf::Mouse::Left  && ((190>mouse.y)&& (mouse.y>150))) {
 							 screen=0;
 							 break;
 							}
-							if (event.mouseButton.button == sf::Mouse::Left && mouse.y>200) {
+							if (event2.mouseButton.button == sf::Mouse::Left && mouse.y>200) {
 							 window.close();
 							 break;
 							}
 						}
 					}
-				}
+				
 				window.clear();
 				window.draw(menu);
 				window.display();
