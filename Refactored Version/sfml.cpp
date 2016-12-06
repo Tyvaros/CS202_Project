@@ -55,12 +55,11 @@ int main()
 
 	sf::Sprite sprite;
 	sf::Texture texture;
-    
-    sf::Texture endGameTexture;
-    sf::Sprite endGameSprite;
-    endGameTexture.loadFromFile("gameOver.png");
-    endGameSprite.setTexture(endGameTexture);
-    
+
+	sf::Texture endGameTexture;
+	sf::Sprite endGameSprite;
+	endGameTexture.loadFromFile("gameOver.png");
+	endGameSprite.setTexture(endGameTexture);
 
 	texture.setRepeated(false);//load the sprite for the player
 	if (!texture.loadFromFile("player.png")) {
@@ -229,13 +228,16 @@ int main()
 					}
 					if (event.key.code == sf::Keyboard::LControl)
 					{
-						// TODO player attack in that direction
 						map.playerAttack();
 						std::cout << map.getEnemies()[0].getHealth() << std::endl;
 					}
+					if (event.key.code == sf::Keyboard::Escape)
+					{
+						window.close();
+					}
 
 					map.enemy_AI_Movement();
-					mist.move(0, .1); // I didn't touch this
+					mist.move(0, .5);
 
 				default:
 					break;
@@ -248,22 +250,10 @@ int main()
 		window.draw(map);
 		window.draw(rectangle);
 		window.draw(mist);
-		//	window.draw(zombie);
-		//	window.draw(sprite);
         window.draw(health);
-        window.draw(endGameSprite);
-        endGameSprite.setColor(sf::Color(255, 255, 255, 0));
+		window.draw(endGameSprite);
+		endGameSprite.setColor(sf::Color(255, 255, 255, 0)); // Sets endGameSprite invisible but atop everything
 		window.display();
-		//stuff needs to be drawn in the right order.
-		//VERY IMPORTANT: collision detection is done after drawing
-		//	if it's done before the bounds are not defined
-		//  if(boundingBox.intersects(door)) {
-//		//	level=levelGen();
-		//	map=mapInit(level);
-		//	//mapLoad(map,level);
-		//	std::cout << "changed map" << std::endl;
-		//	sprite.setPosition(448,64); // Game Coordinates are (14,2)
-		//}
 
 		if (map.isPlayerWhereEnemiesAre())
 		{
@@ -275,14 +265,6 @@ int main()
 			map.getPlayer().damage(1);
 			std::cout << "1 damage" << std::endl;
 		}
-        
-        for (int i=0; i<map.getEnemies().size(); i++) {
-            if (map.getEnemies()[i].getHealth() == 0) {
-                int health = 10;
-                map.moveToCoordinates(map.getEnemies()[i], sf::Vector2i{-1,-1});
-                map.getEnemies()[i].setHealth(health);
-            }
-        }
 
 		if (map.isPlayerWhereDoorIs())
 		{
@@ -290,9 +272,9 @@ int main()
 			map.levelGen();
 		}
 
+		// There are some bugs with this (like player still being able to move)
 		if (map.getPlayer().getHealth() <= 0) {
-            endGameSprite.setColor(sf::Color(255, 255, 255, 255));
-//            return 0;
+			endGameSprite.setColor(sf::Color(255, 255, 255, 255));
 		}
 
 		s.str(""); //clear the health string

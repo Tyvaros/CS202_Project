@@ -121,17 +121,31 @@ DIRECTION intToEnum(int ii)
 	return static_cast<DIRECTION>(ii);
 }
 
-char * enumToString(TILESETFILE tile){
-    switch (tile) {
-        case TILESETFILE::FOREST:
-            return "tileset.png";
+char * enumToString(TILESETFILE tile) {
+	switch (tile) {
+	case TILESETFILE::FOREST:
+		return "tileset.png";
 
-        case TILESETFILE::CAVE:
-            return "tilese_cave.png";
+	case TILESETFILE::CAVE:
+		return "tilese_cave.png";
 
-        default:
-            return "";
-    }
+	default:
+		return "";
+	}
+}
+
+// Convert TILESETFILE to const String
+const std::string enumToFileString(TILESETFILE tile) {
+	switch (tile) {
+	case TILESETFILE::FOREST:
+		return "tileset.png";
+
+	case TILESETFILE::CAVE:
+		return "tilese_cave.png";
+
+	default:
+		return "";
+	}
 }
 
 
@@ -438,9 +452,6 @@ void Level::loadGame(Level& level) {
 		//sets tileSizeString to int value
 		int tileListSizeInt = atoi(tileListSizeString.c_str());
 
-		std::cout << tileListSizeInt << std::endl;
-		std::cin >> tileListSizeString; // TODO REMOVE ME
-
 		//Load vector with old map tiles
 		std::vector<int> map;
 
@@ -578,8 +589,6 @@ bool Level::canMove(GameObject& obj, DIRECTION dir)
 {
 	int x = obj.getGameCoordinates().x;
 	int y = obj.getGameCoordinates().y;
-	//int tileWidth = m_tileSize.x;
-	//int tileHeight = m_tileSize.y;
 	int tileMapWidth = m_sizeOfTileMap.x;
 	int tileMapHeight = m_sizeOfTileMap.y;
 
