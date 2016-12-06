@@ -317,23 +317,23 @@ int main()
 					}
 				case sf::Event::MouseButtonPressed:
 					sf::Vector2i mouse = sf::Mouse::getPosition(window);
-					if (event2.mouseButton.button == sf::Mouse::Left && ((135.5>mouse.y) && (mouse.y>98.5))) {
+					if (event2.mouseButton.button == sf::Mouse::Left && ((115.5 / 288 * window.getSize().y>mouse.y) && (mouse.y>78.5 / 288 * window.getSize().y))) {
 						std::cout << "Game saved." << std::endl;
 						screen = 0;
 						Level::saveGame(map);
 						break;
 					}
-					if (event2.mouseButton.button == sf::Mouse::Left && ((181.5>mouse.y) && (mouse.y>144.5))) {
+					if (event2.mouseButton.button == sf::Mouse::Left && ((161.5 / 288 * window.getSize().y>mouse.y) && (mouse.y>124.5 / 288 * window.getSize().y))) {
 						std::cout << "Game loaded." << std::endl;
 						screen = 0;
 						Level::loadGame(map);
 						break;
 					}
-					if (event2.mouseButton.button == sf::Mouse::Left && ((227.5>mouse.y) && (mouse.y>190.5))) {
+					if (event2.mouseButton.button == sf::Mouse::Left && ((207.5/288*window.getSize().y>mouse.y) && (mouse.y>170.5 / 288 * window.getSize().y))) {
 						screen = 0;
 						break;
 					}
-					if (event2.mouseButton.button == sf::Mouse::Left && ((273.5>mouse.y) && (mouse.y>236.5))) {
+					if (event2.mouseButton.button == sf::Mouse::Left && ((253.5 / 288 * window.getSize().y>mouse.y) && (mouse.y>216.5 / 288 * window.getSize().y))) {
 						screen = -1;
 						window.close();
 						return EXIT_SUCCESS;
