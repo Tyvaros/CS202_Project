@@ -100,18 +100,21 @@ int main()
 	knight.setTextureRect(walkingDown);
 	knight.setPosition(32.0f, 32.0f);
 
-	ActorObject knightObj;
-	knightObj.setDirectionFacing(DIRECTION::DOWN);
-	knightObj.setGameCoordinates(sf::Vector2i{1, 1});
-	knightObj.setObject(knight);
+	// Multiple enemies
+	for (int i = 0; i < 2; ++i) {
+		ActorObject knightObj;
+		knightObj.setDirectionFacing(DIRECTION::DOWN);
+		knightObj.setGameCoordinates(sf::Vector2i{ 1, 1 });
+		knightObj.setObject(knight);
 
 
-	knightObj.getRects().push_back(walkingRight);
-	knightObj.getRects().push_back(walkingUp);
-	knightObj.getRects().push_back(walkingLeft);
-	knightObj.getRects().push_back(walkingDown);
+		knightObj.getRects().push_back(walkingRight);
+		knightObj.getRects().push_back(walkingUp);
+		knightObj.getRects().push_back(walkingLeft);
+		knightObj.getRects().push_back(walkingDown);
 
-	map.addEnemy(knightObj);
+		map.addEnemy(knightObj);
+	} // DELETE ME
 
 	sf::Sprite stairs;
 	stairs.setPosition(32, 32);
