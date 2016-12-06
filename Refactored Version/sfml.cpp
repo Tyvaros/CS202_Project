@@ -54,7 +54,7 @@ int main()
 	health.setString(healthDisplay);
 	health.setPosition(0, 256);
 	health.setCharacterSize(24);
-	health.setColor(sf::Color::Red);
+	health.setFillColor(sf::Color::Red);
 
 	sf::Sprite sprite;
 	sf::Texture texture;
