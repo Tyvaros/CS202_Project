@@ -845,7 +845,6 @@ void Level::draw(sf::RenderTarget &target, sf::RenderStates states) const
 std::string Level::toString()
 {
 	std::stringstream sStream;
-
 	sStream << m_Items.size() << '\n';
 
 	if (m_Items.size() != 0)
@@ -857,26 +856,20 @@ std::string Level::toString()
 	}
 
 	sStream << '\n';
-
 	sStream << m_Enemies.size() << '\n';
 
 	if (m_Enemies.size() != 0)
 	{
 		for (auto it = m_Enemies.begin(); it != m_Enemies.end() - 1; ++it)
 			sStream << it->toString() << ' ';
-
 		sStream << m_Enemies.back().toString();
 	}
 
 	sStream << '\n';
-
 	sStream << m_Player.toString() << '\n';
-
 	sStream << m_stairs.toString() << '\n';
-
 	sStream << m_map.toString() << '\n';
-
 	sStream << m_sizeOfTileMap.x << ' ' << m_sizeOfTileMap.y << '\n';
-
 	return sStream.str();
 }
+
